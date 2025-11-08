@@ -1,5 +1,5 @@
 ## GAT Experiment plan
-The base of this repository is my "Advanced Topics in Artifficial Intelligence" class project. 
+The reason why this repository exists is my "Advanced Topics in Artifficial Intelligence" class project. 
 
 #### Experiment Overwiev:
 (For better resolution check uploaded pdf)
