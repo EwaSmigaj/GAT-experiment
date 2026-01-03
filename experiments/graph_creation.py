@@ -270,3 +270,17 @@ def add_reverse_edges(data):
     
     return data
 
+def prepare_data():
+    users, merchants, transactions = load_dataframes()
+
+    # Delete String Columns (so far)
+    merchants = handle_string_cols_merchant(merchants)
+    transactions = handle_string_cols_edge(transactions)
+    users = handle_string_cols_users(users)
+
+    users, merchants, transactions = map_and_clean_ids(users, merchants, transactions)
+
+    data: HeteroData = process_node_features(users, merchants)
+    data = process_edge_features(data, transactions)
+    data = add_reverse_edges(data)
+    return data
