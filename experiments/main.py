@@ -9,15 +9,12 @@ from torch_geometric.nn import SAGEConv, to_hetero
 import torch.nn.functional as F
 from collections import defaultdict
 from training import TrainingProcessor
+import time
 
 
 
 def main():
     """Główny punkt wejścia do przetwarzania danych i treningu."""
-    
-    # Ustawienie urządzenia
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Używane urządzenie: {device}")
 
     """
     GRAPH CREATION
@@ -57,4 +54,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main() 
+
+    start = time.perf_counter()
+
+    main()
+
+    end = time.perf_counter()
+    print(f"Execution time: {end - start:.4f} seconds")
