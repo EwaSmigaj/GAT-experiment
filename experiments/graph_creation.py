@@ -235,23 +235,37 @@ def process_edge_features(data: HeteroData, transactions: pd.DataFrame) -> Heter
     print("processing edge features...")
     transactions.info()
 
-    # Sort transactions (for masking in the future)
+    # 1. Sortowanie (tak jak miałaś)
     transactions = transactions.sort_values('timestamp').reset_index(drop=True)
 
+    # 2. Wybór kolumn
+    feature_cols = [key for key in list(transactions.columns.values) 
+                    if key not in ['merchant_idx', 'user_idx', 'card_brand', 'label']]
+    
+    # --- NOWOŚĆ: NORMALIZACJA ---
+    # Wyciągamy wartości do numpy
+    x_edge = transactions[feature_cols].values
+    
+    # Inicjalizujemy scaler
+    scaler = StandardScaler()
+    # Fit & Transform - dane będą miały teraz średnią 0 i odchylenie 1
+    x_edge_scaled = scaler.fit_transform(x_edge)
+    # ----------------------------
+
+    # 3. Tworzenie tensorów z przeskalowanych danych
     edge_index = torch.tensor(
         np.stack([transactions['user_idx'].values, transactions['merchant_idx'].values]), 
         dtype=torch.long
     )
-
-    # Feature cols
-    feature_cols = [key for key in list(transactions.columns.values) if key not in ['merchant_idx', 'user_idx', 'card_brand', 'label']]
-    edge_attr = torch.tensor(transactions[feature_cols].values, dtype=torch.float)
+    edge_attr = torch.tensor(x_edge_scaled, dtype=torch.float) # używamy x_edge_scaled!
     edge_label = torch.tensor(transactions['label'].values, dtype=torch.long)
 
+    # 4. Przypisanie do obiektu HeteroData
     data['user', 'transacts', 'merchant'].edge_index = edge_index
     data['user', 'transacts', 'merchant'].edge_attr = edge_attr
     data['user', 'transacts', 'merchant'].edge_label = edge_label 
     
+    print(f"Znormalizowano {len(feature_cols)} cech krawędzi.")
     return data
 
 def add_reverse_edges(data):

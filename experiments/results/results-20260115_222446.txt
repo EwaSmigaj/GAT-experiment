@@ -1,0 +1,8 @@
+=== WYNIKI TRENINGU ===
+
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.7881 | Val F1: 0.0177 | Val Rec: 0.0118 | PosScore: 0.564 | NegScore: 0.581
+Epoch 10 | Loss: 0.7614 | Val F1: 0.0238 | Val Rec: 0.3787 | PosScore: 0.784 | NegScore: 0.294

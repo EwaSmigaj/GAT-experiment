@@ -1,0 +1,31 @@
+=== WYNIKI TRENINGU ===
+
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.7881 | Val F1: 0.0177 | Val Rec: 0.0118 | PosScore: 0.564 | NegScore: 0.581
+Epoch 10 | Loss: 0.7614 | Val F1: 0.0238 | Val Rec: 0.3787 | PosScore: 0.784 | NegScore: 0.294
+Epoch 20 | Loss: 0.5605 | Val F1: 0.0394 | Val Rec: 0.4911 | PosScore: 0.844 | NegScore: 0.206
+Epoch 30 | Loss: 0.4303 | Val F1: 0.0530 | Val Rec: 0.5740 | PosScore: 0.890 | NegScore: 0.158
+Epoch 40 | Loss: 0.3600 | Val F1: 0.0146 | Val Rec: 0.7456 | PosScore: 0.852 | NegScore: 0.089
+Fold 0 FINAL: Loss=0.1965, TP=29, TN=121567, FP=4190, FN=38 BEST F1=0.05297651556526488
+Metrics: Acc=0.9664, Rec=0.4328, Prec=0.0069, F1=0.0135
+
+--- Rep 0 | Fold 1 ---
+Epoch 00 | Loss: 1.7538 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.574 | NegScore: 0.578
+Epoch 10 | Loss: 0.7493 | Val F1: 0.0151 | Val Rec: 0.7710 | PosScore: 0.892 | NegScore: 0.246
+Epoch 20 | Loss: 0.3870 | Val F1: 0.0358 | Val Rec: 0.4885 | PosScore: 0.868 | NegScore: 0.109
+Epoch 30 | Loss: 0.2794 | Val F1: 0.0320 | Val Rec: 0.3969 | PosScore: 0.906 | NegScore: 0.085
+Epoch 40 | Loss: 0.2201 | Val F1: 0.0436 | Val Rec: 0.2901 | PosScore: 0.921 | NegScore: 0.063
+Fold 1 FINAL: Loss=0.0813, TP=53, TN=124273, FP=1422, FN=76 BEST F1=0.043553008595988534
+Metrics: Acc=0.9881, Rec=0.4109, Prec=0.0359, F1=0.0661
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Epoch 00 | Loss: 1.5258 | Val F1: 0.0047 | Val Rec: 0.0296 | PosScore: 0.568 | NegScore: 0.505
+Epoch 10 | Loss: 0.8231 | Val F1: 0.0181 | Val Rec: 0.4675 | PosScore: 0.693 | NegScore: 0.263
+Epoch 20 | Loss: 0.5676 | Val F1: 0.0328 | Val Rec: 0.4911 | PosScore: 0.803 | NegScore: 0.171
+Epoch 30 | Loss: 0.4626 | Val F1: 0.0384 | Val Rec: 0.3314 | PosScore: 0.900 | NegScore: 0.178
+Epoch 40 | Loss: 0.3647 | Val F1: 0.0384 | Val Rec: 0.4615 | PosScore: 0.859 | NegScore: 0.100

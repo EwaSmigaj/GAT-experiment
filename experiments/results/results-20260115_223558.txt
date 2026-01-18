@@ -1,0 +1,365 @@
+=== WYNIKI TRENINGU ===
+
+___________________________________________________
+
+ 
+ 
+ IMPROVED - balanced
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.2569 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.486 | NegScore: 0.480
+Epoch 10 | Loss: 0.6133 | Val F1: 0.0574 | Val Rec: 0.5444 | PosScore: 0.763 | NegScore: 0.200
+Epoch 20 | Loss: 0.5221 | Val F1: 0.0369 | Val Rec: 0.7278 | PosScore: 0.819 | NegScore: 0.185
+Epoch 30 | Loss: 0.4273 | Val F1: 0.0402 | Val Rec: 0.7337 | PosScore: 0.838 | NegScore: 0.137
+Epoch 40 | Loss: 0.3684 | Val F1: 0.0332 | Val Rec: 0.7337 | PosScore: 0.861 | NegScore: 0.128
+Fold 0 FINAL: Loss=0.3883, TP=35, TN=116083, FP=9674, FN=32 BEST F1=0.057356608478803
+Metrics: Acc=0.9229, Rec=0.5224, Prec=0.0036, F1=0.0072
+
+--- Rep 0 | Fold 1 ---
+Epoch 00 | Loss: 1.5785 | Val F1: 0.0040 | Val Rec: 0.2672 | PosScore: 0.458 | NegScore: 0.350
+Epoch 10 | Loss: 0.4393 | Val F1: 0.0219 | Val Rec: 0.5267 | PosScore: 0.822 | NegScore: 0.126
+Epoch 20 | Loss: 0.3255 | Val F1: 0.0216 | Val Rec: 0.6641 | PosScore: 0.894 | NegScore: 0.112
+Epoch 30 | Loss: 0.2574 | Val F1: 0.0241 | Val Rec: 0.5344 | PosScore: 0.901 | NegScore: 0.081
+Epoch 40 | Loss: 0.1960 | Val F1: 0.0219 | Val Rec: 0.5496 | PosScore: 0.936 | NegScore: 0.069
+Fold 1 FINAL: Loss=0.3146, TP=59, TN=118176, FP=7519, FN=70 BEST F1=0.024104683195592284
+Metrics: Acc=0.9397, Rec=0.4574, Prec=0.0078, F1=0.0153
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Epoch 00 | Loss: 5.0501 | Val F1: 0.0067 | Val Rec: 0.3018 | PosScore: 0.046 | NegScore: 0.019
+Epoch 10 | Loss: 0.5205 | Val F1: 0.0321 | Val Rec: 0.4379 | PosScore: 0.830 | NegScore: 0.200
+Epoch 20 | Loss: 0.3906 | Val F1: 0.0297 | Val Rec: 0.5680 | PosScore: 0.841 | NegScore: 0.136
+Epoch 30 | Loss: 0.3662 | Val F1: 0.0288 | Val Rec: 0.5562 | PosScore: 0.882 | NegScore: 0.133
+Epoch 40 | Loss: 0.2704 | Val F1: 0.0292 | Val Rec: 0.6154 | PosScore: 0.915 | NegScore: 0.108
+Fold 0 FINAL: Loss=0.3907, TP=37, TN=115605, FP=10152, FN=30 BEST F1=0.03213897937024973
+Metrics: Acc=0.9191, Rec=0.5522, Prec=0.0036, F1=0.0072
+
+--- Rep 1 | Fold 1 ---
+Epoch 00 | Loss: 1.7088 | Val F1: 0.0046 | Val Rec: 0.6260 | PosScore: 0.508 | NegScore: 0.245
+Epoch 10 | Loss: 0.3318 | Val F1: 0.0155 | Val Rec: 0.4504 | PosScore: 0.891 | NegScore: 0.097
+Epoch 20 | Loss: 0.2167 | Val F1: 0.0261 | Val Rec: 0.6947 | PosScore: 0.934 | NegScore: 0.079
+Epoch 30 | Loss: 0.1614 | Val F1: 0.0249 | Val Rec: 0.4962 | PosScore: 0.929 | NegScore: 0.050
+Epoch 40 | Loss: 0.1310 | Val F1: 0.0279 | Val Rec: 0.5191 | PosScore: 0.969 | NegScore: 0.056
+Fold 1 FINAL: Loss=0.2417, TP=57, TN=119912, FP=5783, FN=72 BEST F1=0.027891714520098445
+Metrics: Acc=0.9535, Rec=0.4419, Prec=0.0098, F1=0.0191
+
+=== REP 2 ===
+
+--- Rep 2 | Fold 0 ---
+Epoch 00 | Loss: 6.8032 | Val F1: 0.0139 | Val Rec: 0.1065 | PosScore: 0.024 | NegScore: 0.006
+Epoch 10 | Loss: 0.5587 | Val F1: 0.0200 | Val Rec: 0.5207 | PosScore: 0.756 | NegScore: 0.148
+Epoch 20 | Loss: 0.3808 | Val F1: 0.0297 | Val Rec: 0.5976 | PosScore: 0.857 | NegScore: 0.131
+Epoch 30 | Loss: 0.2899 | Val F1: 0.0290 | Val Rec: 0.6746 | PosScore: 0.884 | NegScore: 0.101
+Epoch 40 | Loss: 0.2307 | Val F1: 0.0306 | Val Rec: 0.6095 | PosScore: 0.912 | NegScore: 0.083
+Fold 0 FINAL: Loss=0.3407, TP=23, TN=117014, FP=8743, FN=44 BEST F1=0.030572870287919267
+Metrics: Acc=0.9302, Rec=0.3433, Prec=0.0026, F1=0.0052
+
+--- Rep 2 | Fold 1 ---
+Epoch 00 | Loss: 1.3551 | Val F1: 0.0040 | Val Rec: 0.6870 | PosScore: 0.675 | NegScore: 0.288
+Epoch 10 | Loss: 0.2903 | Val F1: 0.0180 | Val Rec: 0.5115 | PosScore: 0.897 | NegScore: 0.089
+Epoch 20 | Loss: 0.1872 | Val F1: 0.0232 | Val Rec: 0.5344 | PosScore: 0.933 | NegScore: 0.068
+Epoch 30 | Loss: 0.1470 | Val F1: 0.0265 | Val Rec: 0.5496 | PosScore: 0.959 | NegScore: 0.055
+Epoch 40 | Loss: 0.1058 | Val F1: 0.0253 | Val Rec: 0.3588 | PosScore: 0.955 | NegScore: 0.037
+Fold 1 FINAL: Loss=0.2601, TP=57, TN=119458, FP=6237, FN=72 BEST F1=0.026504693539480952
+Metrics: Acc=0.9499, Rec=0.4419, Prec=0.0091, F1=0.0177
+
+=== REP 3 ===
+
+--- Rep 3 | Fold 0 ---
+Epoch 00 | Loss: 6.9500 | Val F1: 0.0065 | Val Rec: 0.0414 | PosScore: 0.038 | NegScore: 0.011
+Epoch 10 | Loss: 0.4532 | Val F1: 0.0213 | Val Rec: 0.5030 | PosScore: 0.815 | NegScore: 0.150
+Epoch 20 | Loss: 0.3020 | Val F1: 0.0245 | Val Rec: 0.5325 | PosScore: 0.865 | NegScore: 0.092
+Epoch 30 | Loss: 0.2737 | Val F1: 0.0238 | Val Rec: 0.5976 | PosScore: 0.927 | NegScore: 0.105
+Epoch 40 | Loss: 0.2012 | Val F1: 0.0237 | Val Rec: 0.5621 | PosScore: 0.923 | NegScore: 0.070
+Fold 0 FINAL: Loss=0.4080, TP=31, TN=115141, FP=10616, FN=36 BEST F1=0.024533187951478807
+Metrics: Acc=0.9153, Rec=0.4627, Prec=0.0029, F1=0.0058
+
+--- Rep 3 | Fold 1 ---
+Epoch 00 | Loss: 1.6203 | Val F1: 0.0057 | Val Rec: 0.4962 | PosScore: 0.600 | NegScore: 0.297
+Epoch 10 | Loss: 0.2848 | Val F1: 0.0127 | Val Rec: 0.3969 | PosScore: 0.939 | NegScore: 0.114
+Epoch 20 | Loss: 0.1713 | Val F1: 0.0117 | Val Rec: 0.3206 | PosScore: 0.946 | NegScore: 0.061
+Epoch 30 | Loss: 0.1303 | Val F1: 0.0122 | Val Rec: 0.1908 | PosScore: 0.944 | NegScore: 0.041
+Epoch 40 | Loss: 0.1168 | Val F1: 0.0092 | Val Rec: 0.1298 | PosScore: 0.959 | NegScore: 0.043
+Fold 1 FINAL: Loss=0.2290, TP=43, TN=119972, FP=5723, FN=86 BEST F1=0.012698412698412698
+Metrics: Acc=0.9538, Rec=0.3333, Prec=0.0075, F1=0.0146
+
+=== REP 4 ===
+
+--- Rep 4 | Fold 0 ---
+Epoch 00 | Loss: 8.1041 | Val F1: 0.0087 | Val Rec: 0.2959 | PosScore: 0.024 | NegScore: 0.006
+Epoch 10 | Loss: 0.4423 | Val F1: 0.0274 | Val Rec: 0.5089 | PosScore: 0.872 | NegScore: 0.153
+Epoch 20 | Loss: 0.3184 | Val F1: 0.0314 | Val Rec: 0.5680 | PosScore: 0.866 | NegScore: 0.106
+Epoch 30 | Loss: 0.2466 | Val F1: 0.0270 | Val Rec: 0.5562 | PosScore: 0.937 | NegScore: 0.104
+Epoch 40 | Loss: 0.2304 | Val F1: 0.0314 | Val Rec: 0.5562 | PosScore: 0.897 | NegScore: 0.066
+Fold 0 FINAL: Loss=0.4221, TP=28, TN=115256, FP=10501, FN=39 BEST F1=0.031439331914196816
+Metrics: Acc=0.9162, Rec=0.4179, Prec=0.0027, F1=0.0053
+
+--- Rep 4 | Fold 1 ---
+Epoch 00 | Loss: 1.6638 | Val F1: 0.0049 | Val Rec: 0.8015 | PosScore: 0.592 | NegScore: 0.227
+Epoch 10 | Loss: 0.2845 | Val F1: 0.0096 | Val Rec: 0.5115 | PosScore: 0.910 | NegScore: 0.098
+Epoch 20 | Loss: 0.1610 | Val F1: 0.0148 | Val Rec: 0.4351 | PosScore: 0.936 | NegScore: 0.049
+Epoch 30 | Loss: 0.1237 | Val F1: 0.0135 | Val Rec: 0.3130 | PosScore: 0.957 | NegScore: 0.043
+Epoch 40 | Loss: 0.1066 | Val F1: 0.0169 | Val Rec: 0.2748 | PosScore: 0.956 | NegScore: 0.035
+Fold 1 FINAL: Loss=0.3122, TP=50, TN=117844, FP=7851, FN=79 BEST F1=0.016865776528461
+Metrics: Acc=0.9370, Rec=0.3876, Prec=0.0063, F1=0.0125
+defaultdict(<class 'list'>, {'acc': [np.float64(0.9312730480671414), np.float64(0.9362720943540184), np.float64(0.9400114445574771), np.float64(0.9345872011698881), np.float64(0.9266038275686673)], 'recall': [np.float64(0.48987620039338187), np.float64(0.4970496355432142), np.float64(0.39257202360291565), np.float64(0.3980099502487562), np.float64(0.4027536734930001)], 'precision': [np.float64(0.0056952990508897326), np.float64(0.0066958205666331), np.float64(0.0058400088564731535), np.float64(0.005184563917454336), np.float64(0.004493817372355393)], 'f1_score': [np.float64(0.011235574626930648), np.float64(0.013156982553384895), np.float64(0.011478229620960376), np.float64(0.010187727708927766), np.float64(0.008869156668533017)]})
+
+ 
+ 
+ SimpleGNN
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.7881 | Val F1: 0.0177 | Val Rec: 0.0118 | PosScore: 0.564 | NegScore: 0.581
+Epoch 10 | Loss: 0.7614 | Val F1: 0.0238 | Val Rec: 0.3787 | PosScore: 0.784 | NegScore: 0.294
+Epoch 20 | Loss: 0.5605 | Val F1: 0.0394 | Val Rec: 0.4911 | PosScore: 0.844 | NegScore: 0.206
+Epoch 30 | Loss: 0.4302 | Val F1: 0.0529 | Val Rec: 0.5740 | PosScore: 0.890 | NegScore: 0.158
+Epoch 40 | Loss: 0.3577 | Val F1: 0.0331 | Val Rec: 0.6272 | PosScore: 0.843 | NegScore: 0.083
+Fold 0 FINAL: Loss=0.2372, TP=23, TN=120334, FP=5423, FN=44 BEST F1=0.05293315143246931
+Metrics: Acc=0.9566, Rec=0.3433, Prec=0.0042, F1=0.0083
+
+--- Rep 0 | Fold 1 ---
+Epoch 00 | Loss: 1.7538 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.574 | NegScore: 0.578
+Epoch 10 | Loss: 0.7493 | Val F1: 0.0151 | Val Rec: 0.7710 | PosScore: 0.892 | NegScore: 0.246
+Epoch 20 | Loss: 0.3870 | Val F1: 0.0358 | Val Rec: 0.4885 | PosScore: 0.868 | NegScore: 0.109
+Epoch 30 | Loss: 0.2794 | Val F1: 0.0320 | Val Rec: 0.3969 | PosScore: 0.906 | NegScore: 0.085
+Epoch 40 | Loss: 0.2201 | Val F1: 0.0436 | Val Rec: 0.2901 | PosScore: 0.921 | NegScore: 0.063
+Fold 1 FINAL: Loss=0.0813, TP=53, TN=124258, FP=1437, FN=76 BEST F1=0.043553008595988534
+Metrics: Acc=0.9880, Rec=0.4109, Prec=0.0356, F1=0.0655
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Epoch 00 | Loss: 1.5258 | Val F1: 0.0047 | Val Rec: 0.0296 | PosScore: 0.568 | NegScore: 0.505
+Epoch 10 | Loss: 0.8231 | Val F1: 0.0181 | Val Rec: 0.4675 | PosScore: 0.693 | NegScore: 0.263
+Epoch 20 | Loss: 0.5676 | Val F1: 0.0328 | Val Rec: 0.4911 | PosScore: 0.803 | NegScore: 0.171
+Epoch 30 | Loss: 0.4626 | Val F1: 0.0384 | Val Rec: 0.3314 | PosScore: 0.900 | NegScore: 0.178
+Epoch 40 | Loss: 0.3644 | Val F1: 0.0386 | Val Rec: 0.4615 | PosScore: 0.860 | NegScore: 0.100
+Fold 0 FINAL: Loss=0.2216, TP=20, TN=121415, FP=4342, FN=47 BEST F1=0.03855659911023233
+Metrics: Acc=0.9651, Rec=0.2985, Prec=0.0046, F1=0.0090
+
+--- Rep 1 | Fold 1 ---
+Epoch 00 | Loss: 1.6043 | Val F1: 0.0071 | Val Rec: 0.0458 | PosScore: 0.515 | NegScore: 0.497
+Epoch 10 | Loss: 0.5619 | Val F1: 0.0240 | Val Rec: 0.6336 | PosScore: 0.802 | NegScore: 0.159
+Epoch 20 | Loss: 0.3658 | Val F1: 0.0320 | Val Rec: 0.4733 | PosScore: 0.884 | NegScore: 0.102
+Epoch 30 | Loss: 0.2652 | Val F1: 0.0391 | Val Rec: 0.3435 | PosScore: 0.933 | NegScore: 0.096
+Epoch 40 | Loss: 0.2434 | Val F1: 0.0373 | Val Rec: 0.3130 | PosScore: 0.969 | NegScore: 0.102
+Fold 1 FINAL: Loss=0.0593, TP=35, TN=124692, FP=1003, FN=94 BEST F1=0.039147455415398
+Metrics: Acc=0.9913, Rec=0.2713, Prec=0.0337, F1=0.0600
+
+=== REP 2 ===
+
+--- Rep 2 | Fold 0 ---
+Epoch 00 | Loss: 2.2772 | Val F1: 0.0060 | Val Rec: 0.9112 | PosScore: 0.427 | NegScore: 0.538
+Epoch 10 | Loss: 0.7587 | Val F1: 0.0344 | Val Rec: 0.4734 | PosScore: 0.790 | NegScore: 0.250
+Epoch 20 | Loss: 0.5402 | Val F1: 0.0360 | Val Rec: 0.6154 | PosScore: 0.823 | NegScore: 0.168
+Epoch 30 | Loss: 0.4169 | Val F1: 0.0229 | Val Rec: 0.6746 | PosScore: 0.833 | NegScore: 0.107
+Epoch 40 | Loss: 0.7433 | Val F1: 0.0392 | Val Rec: 0.3846 | PosScore: 0.652 | NegScore: 0.047
+Fold 0 FINAL: Loss=0.1629, TP=21, TN=122775, FP=2982, FN=46 BEST F1=0.0392156862745098
+Metrics: Acc=0.9759, Rec=0.3134, Prec=0.0070, F1=0.0137
+
+--- Rep 2 | Fold 1 ---
+Epoch 00 | Loss: 2.0565 | Val F1: 0.0049 | Val Rec: 0.9389 | PosScore: 0.434 | NegScore: 0.512
+Epoch 10 | Loss: 0.8827 | Val F1: 0.0184 | Val Rec: 0.9313 | PosScore: 0.878 | NegScore: 0.245
+Epoch 20 | Loss: 0.4460 | Val F1: 0.0339 | Val Rec: 0.7252 | PosScore: 0.873 | NegScore: 0.131
+Epoch 30 | Loss: 0.3186 | Val F1: 0.0283 | Val Rec: 0.4122 | PosScore: 0.915 | NegScore: 0.103
+Epoch 40 | Loss: 0.2438 | Val F1: 0.0403 | Val Rec: 0.3740 | PosScore: 0.934 | NegScore: 0.087
+Fold 1 FINAL: Loss=0.0563, TP=31, TN=124737, FP=958, FN=98 BEST F1=0.04027949034114262
+Metrics: Acc=0.9916, Rec=0.2403, Prec=0.0313, F1=0.0555
+
+=== REP 3 ===
+
+--- Rep 3 | Fold 0 ---
+Epoch 00 | Loss: 1.9950 | Val F1: 0.0057 | Val Rec: 0.9527 | PosScore: 0.419 | NegScore: 0.507
+Epoch 10 | Loss: 0.8243 | Val F1: 0.0359 | Val Rec: 0.4083 | PosScore: 0.656 | NegScore: 0.178
+Epoch 20 | Loss: 0.5826 | Val F1: 0.0313 | Val Rec: 0.5858 | PosScore: 0.827 | NegScore: 0.207
+Epoch 30 | Loss: 0.4627 | Val F1: 0.0336 | Val Rec: 0.5680 | PosScore: 0.829 | NegScore: 0.128
+Epoch 40 | Loss: 0.3884 | Val F1: 0.0370 | Val Rec: 0.5030 | PosScore: 0.841 | NegScore: 0.100
+Fold 0 FINAL: Loss=0.2275, TP=22, TN=121773, FP=3984, FN=45 BEST F1=0.036980639547531
+Metrics: Acc=0.9680, Rec=0.3284, Prec=0.0055, F1=0.0108
+
+--- Rep 3 | Fold 1 ---
+Epoch 00 | Loss: 2.2075 | Val F1: 0.0048 | Val Rec: 0.9237 | PosScore: 0.350 | NegScore: 0.504
+Epoch 10 | Loss: 0.5949 | Val F1: 0.0375 | Val Rec: 0.7863 | PosScore: 0.817 | NegScore: 0.189
+Epoch 20 | Loss: 0.3847 | Val F1: 0.0368 | Val Rec: 0.6412 | PosScore: 0.886 | NegScore: 0.122
+Epoch 30 | Loss: 0.2704 | Val F1: 0.0458 | Val Rec: 0.4809 | PosScore: 0.923 | NegScore: 0.090
+Epoch 40 | Loss: 0.2120 | Val F1: 0.0427 | Val Rec: 0.3511 | PosScore: 0.922 | NegScore: 0.060
+Fold 1 FINAL: Loss=0.0808, TP=43, TN=124407, FP=1288, FN=86 BEST F1=0.04578488372093023
+Metrics: Acc=0.9891, Rec=0.3333, Prec=0.0323, F1=0.0589
+
+=== REP 4 ===
+
+--- Rep 4 | Fold 0 ---
+Epoch 00 | Loss: 1.9216 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.684 | NegScore: 0.707
+Epoch 10 | Loss: 1.1084 | Val F1: 0.0123 | Val Rec: 0.9527 | PosScore: 0.829 | NegScore: 0.448
+Epoch 20 | Loss: 0.7209 | Val F1: 0.0379 | Val Rec: 0.5917 | PosScore: 0.804 | NegScore: 0.252
+Epoch 30 | Loss: 0.5525 | Val F1: 0.0293 | Val Rec: 0.5621 | PosScore: 0.833 | NegScore: 0.176
+Epoch 40 | Loss: 0.4492 | Val F1: 0.0395 | Val Rec: 0.4675 | PosScore: 0.856 | NegScore: 0.142
+Fold 0 FINAL: Loss=0.2299, TP=21, TN=121647, FP=4110, FN=46 BEST F1=0.03951975987993998
+Metrics: Acc=0.9670, Rec=0.3134, Prec=0.0051, F1=0.0100
+
+--- Rep 4 | Fold 1 ---
+Epoch 00 | Loss: 1.9451 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.731 | NegScore: 0.731
+Epoch 10 | Loss: 0.8213 | Val F1: 0.0212 | Val Rec: 0.7634 | PosScore: 0.898 | NegScore: 0.327
+Epoch 20 | Loss: 0.4472 | Val F1: 0.0345 | Val Rec: 0.7176 | PosScore: 0.837 | NegScore: 0.121
+Epoch 30 | Loss: 0.3259 | Val F1: 0.0346 | Val Rec: 0.5038 | PosScore: 0.880 | NegScore: 0.087
+Epoch 40 | Loss: 0.2540 | Val F1: 0.0398 | Val Rec: 0.4580 | PosScore: 0.925 | NegScore: 0.085
+Fold 1 FINAL: Loss=0.0979, TP=55, TN=123629, FP=2066, FN=74 BEST F1=0.03980099502487562
+Metrics: Acc=0.9830, Rec=0.4264, Prec=0.0259, F1=0.0489
+defaultdict(<class 'list'>, {'acc': [np.float64(0.9722628433367243), np.float64(0.9781997075279756), np.float64(0.983770981688708), np.float64(0.9785295333163784), np.float64(0.9749809257375381)], 'recall': [np.float64(0.3770681476339234), np.float64(0.28491264607196576), np.float64(0.2768714566701377), np.float64(0.3308457711442786), np.float64(0.36989471248409117)], 'precision': [np.float64(0.01989687647112467), np.float64(0.019151871258080162), np.float64(0.01916889985646305), np.float64(0.018899149397616576), np.float64(0.015507339716231193)], 'f1_score': [np.float64(0.03690821414082521), np.float64(0.034507123049512214), np.float64(0.03456847674709958), np.float64(0.034853478806305474), np.float64(0.0294468265311524)]})
+___________________________________________________
+
+ 
+ 
+ SimpleGNN - balanced
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.5655 | Val F1: 0.0244 | Val Rec: 0.0651 | PosScore: 0.563 | NegScore: 0.591
+Epoch 10 | Loss: 0.6994 | Val F1: 0.0270 | Val Rec: 0.5976 | PosScore: 0.767 | NegScore: 0.253
+Epoch 20 | Loss: 0.5394 | Val F1: 0.0388 | Val Rec: 0.5207 | PosScore: 0.814 | NegScore: 0.188
+Epoch 30 | Loss: 0.4127 | Val F1: 0.0302 | Val Rec: 0.4911 | PosScore: 0.846 | NegScore: 0.148
+Epoch 40 | Loss: 0.3508 | Val F1: 0.0329 | Val Rec: 0.5148 | PosScore: 0.869 | NegScore: 0.122
+Fold 0 FINAL: Loss=0.1834, TP=19, TN=122469, FP=3288, FN=48 BEST F1=0.038809261300992284
+Metrics: Acc=0.9735, Rec=0.2836, Prec=0.0057, F1=0.0113
+
+--- Rep 0 | Fold 1 ---
+Epoch 00 | Loss: 1.5157 | Val F1: 0.0281 | Val Rec: 0.0992 | PosScore: 0.541 | NegScore: 0.510
+Epoch 10 | Loss: 0.4608 | Val F1: 0.0370 | Val Rec: 0.7023 | PosScore: 0.840 | NegScore: 0.134
+Epoch 20 | Loss: 0.2996 | Val F1: 0.0420 | Val Rec: 0.5573 | PosScore: 0.898 | NegScore: 0.095
+Epoch 30 | Loss: 0.2435 | Val F1: 0.0427 | Val Rec: 0.4962 | PosScore: 0.898 | NegScore: 0.066
+Epoch 40 | Loss: 0.2027 | Val F1: 0.0546 | Val Rec: 0.3817 | PosScore: 0.941 | NegScore: 0.075
+Fold 1 FINAL: Loss=0.1689, TP=61, TN=121537, FP=4158, FN=68 BEST F1=0.054614964500273075
+Metrics: Acc=0.9664, Rec=0.4729, Prec=0.0145, F1=0.0281
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Epoch 00 | Loss: 1.6989 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.666 | NegScore: 0.638
+Epoch 10 | Loss: 0.8280 | Val F1: 0.0441 | Val Rec: 0.4911 | PosScore: 0.649 | NegScore: 0.228
+Epoch 20 | Loss: 0.5502 | Val F1: 0.0318 | Val Rec: 0.5207 | PosScore: 0.761 | NegScore: 0.166
+Epoch 30 | Loss: 0.4433 | Val F1: 0.0351 | Val Rec: 0.5562 | PosScore: 0.859 | NegScore: 0.173
+Epoch 40 | Loss: 0.3640 | Val F1: 0.0533 | Val Rec: 0.4852 | PosScore: 0.884 | NegScore: 0.139
+Fold 0 FINAL: Loss=0.1395, TP=18, TN=123531, FP=2226, FN=49 BEST F1=0.053281351526965566
+Metrics: Acc=0.9819, Rec=0.2687, Prec=0.0080, F1=0.0156
+
+--- Rep 1 | Fold 1 ---
+Epoch 00 | Loss: 1.6196 | Val F1: 0.0037 | Val Rec: 1.0000 | PosScore: 0.396 | NegScore: 0.406
+Epoch 10 | Loss: 0.5014 | Val F1: 0.0387 | Val Rec: 0.6183 | PosScore: 0.759 | NegScore: 0.150
+Epoch 20 | Loss: 0.3267 | Val F1: 0.0299 | Val Rec: 0.4198 | PosScore: 0.904 | NegScore: 0.123
+Epoch 30 | Loss: 0.2277 | Val F1: 0.0343 | Val Rec: 0.4427 | PosScore: 0.932 | NegScore: 0.087
+Epoch 40 | Loss: 0.1925 | Val F1: 0.0377 | Val Rec: 0.2824 | PosScore: 0.942 | NegScore: 0.075
+Fold 1 FINAL: Loss=0.1129, TP=53, TN=123576, FP=2119, FN=76 BEST F1=0.03867271425161137
+Metrics: Acc=0.9826, Rec=0.4109, Prec=0.0244, F1=0.0461
+
+=== REP 2 ===
+
+--- Rep 2 | Fold 0 ---
+Epoch 00 | Loss: 1.6835 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.579 | NegScore: 0.596
+Epoch 10 | Loss: 0.7202 | Val F1: 0.0420 | Val Rec: 0.6213 | PosScore: 0.671 | NegScore: 0.208
+Epoch 20 | Loss: 0.4956 | Val F1: 0.0357 | Val Rec: 0.7219 | PosScore: 0.833 | NegScore: 0.175
+Epoch 30 | Loss: 0.4045 | Val F1: 0.0289 | Val Rec: 0.6095 | PosScore: 0.832 | NegScore: 0.131
+Epoch 40 | Loss: 0.3498 | Val F1: 0.0632 | Val Rec: 0.4675 | PosScore: 0.910 | NegScore: 0.149
+Fold 0 FINAL: Loss=0.2266, TP=24, TN=121192, FP=4565, FN=43 BEST F1=0.06322529011604643
+Metrics: Acc=0.9634, Rec=0.3582, Prec=0.0052, F1=0.0103
+
+--- Rep 2 | Fold 1 ---
+Epoch 00 | Loss: 1.9360 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.717 | NegScore: 0.738
+Epoch 10 | Loss: 0.7020 | Val F1: 0.0190 | Val Rec: 0.9618 | PosScore: 0.949 | NegScore: 0.319
+Epoch 20 | Loss: 0.3586 | Val F1: 0.0373 | Val Rec: 0.4656 | PosScore: 0.871 | NegScore: 0.111
+Epoch 30 | Loss: 0.2623 | Val F1: 0.0281 | Val Rec: 0.4656 | PosScore: 0.913 | NegScore: 0.097
+Epoch 40 | Loss: 0.2209 | Val F1: 0.0434 | Val Rec: 0.4427 | PosScore: 0.931 | NegScore: 0.083
+Fold 1 FINAL: Loss=0.0738, TP=43, TN=124422, FP=1273, FN=86 BEST F1=0.04338070306656694
+Metrics: Acc=0.9892, Rec=0.3333, Prec=0.0327, F1=0.0595
+
+=== REP 3 ===
+
+--- Rep 3 | Fold 0 ---
+Epoch 00 | Loss: 1.6045 | Val F1: 0.0041 | Val Rec: 0.9467 | PosScore: 0.385 | NegScore: 0.422
+Epoch 10 | Loss: 0.7597 | Val F1: 0.0323 | Val Rec: 0.5385 | PosScore: 0.744 | NegScore: 0.273
+Epoch 20 | Loss: 0.5345 | Val F1: 0.0429 | Val Rec: 0.5976 | PosScore: 0.816 | NegScore: 0.185
+Epoch 30 | Loss: 0.4275 | Val F1: 0.0465 | Val Rec: 0.4911 | PosScore: 0.863 | NegScore: 0.161
+Epoch 40 | Loss: 0.3526 | Val F1: 0.0476 | Val Rec: 0.4556 | PosScore: 0.913 | NegScore: 0.154
+Fold 0 FINAL: Loss=0.2689, TP=24, TN=119219, FP=6538, FN=43 BEST F1=0.04757491504479455
+Metrics: Acc=0.9477, Rec=0.3582, Prec=0.0037, F1=0.0072
+
+--- Rep 3 | Fold 1 ---
+Epoch 00 | Loss: 1.2622 | Val F1: 0.0087 | Val Rec: 0.0840 | PosScore: 0.610 | NegScore: 0.487
+Epoch 10 | Loss: 0.4860 | Val F1: 0.0312 | Val Rec: 0.9160 | PosScore: 0.861 | NegScore: 0.154
+Epoch 20 | Loss: 0.3549 | Val F1: 0.0364 | Val Rec: 0.4962 | PosScore: 0.900 | NegScore: 0.128
+Epoch 30 | Loss: 0.2620 | Val F1: 0.0381 | Val Rec: 0.4656 | PosScore: 0.936 | NegScore: 0.106
+Epoch 40 | Loss: 0.1942 | Val F1: 0.0396 | Val Rec: 0.3588 | PosScore: 0.928 | NegScore: 0.072
+Fold 1 FINAL: Loss=0.0695, TP=43, TN=124469, FP=1226, FN=86 BEST F1=0.039595619208087615
+Metrics: Acc=0.9896, Rec=0.3333, Prec=0.0339, F1=0.0615
+
+=== REP 4 ===
+
+--- Rep 4 | Fold 0 ---
+Epoch 00 | Loss: 1.5438 | Val F1: 0.0030 | Val Rec: 1.0000 | PosScore: 0.331 | NegScore: 0.347
+Epoch 10 | Loss: 0.8149 | Val F1: 0.0372 | Val Rec: 0.4970 | PosScore: 0.789 | NegScore: 0.320
+Epoch 20 | Loss: 0.5542 | Val F1: 0.0299 | Val Rec: 0.4497 | PosScore: 0.795 | NegScore: 0.181
+Epoch 30 | Loss: 0.4335 | Val F1: 0.0427 | Val Rec: 0.5148 | PosScore: 0.861 | NegScore: 0.170
+Epoch 40 | Loss: 0.3518 | Val F1: 0.0495 | Val Rec: 0.4852 | PosScore: 0.863 | NegScore: 0.119
+Fold 0 FINAL: Loss=0.5629, TP=29, TN=109191, FP=16566, FN=38 BEST F1=0.04948702474351236
+Metrics: Acc=0.8680, Rec=0.4328, Prec=0.0017, F1=0.0035
+
+--- Rep 4 | Fold 1 ---
+Epoch 00 | Loss: 1.6748 | Val F1: 0.0294 | Val Rec: 0.0687 | PosScore: 0.626 | NegScore: 0.623
+Epoch 10 | Loss: 0.6274 | Val F1: 0.0228 | Val Rec: 0.8397 | PosScore: 0.882 | NegScore: 0.236
+Epoch 20 | Loss: 0.3745 | Val F1: 0.0425 | Val Rec: 0.6107 | PosScore: 0.894 | NegScore: 0.133
+Epoch 30 | Loss: 0.2764 | Val F1: 0.0384 | Val Rec: 0.3664 | PosScore: 0.927 | NegScore: 0.112
+Epoch 40 | Loss: 0.2272 | Val F1: 0.0536 | Val Rec: 0.4198 | PosScore: 0.948 | NegScore: 0.093
+Fold 1 FINAL: Loss=0.0860, TP=54, TN=124205, FP=1490, FN=75 BEST F1=0.053606237816764137
+Metrics: Acc=0.9876, Rec=0.4186, Prec=0.0350, F1=0.0646
+defaultdict(<class 'list'>, {'acc': [np.float64(0.9699500890132248), np.float64(0.9822370930824008), np.float64(0.9762883074771109), np.float64(0.968634759664293), np.float64(0.9277999427772126)], 'recall': [np.float64(0.3782251533032512), np.float64(0.3397547147981025), np.float64(0.34577114427860695), np.float64(0.34577114427860695), np.float64(0.42572023602915654)], 'precision': [np.float64(0.010101895517369872), np.float64(0.016211431835416235), np.float64(0.018952334808823267), np.float64(0.018771185148197866), np.float64(0.01836080378789416)], 'f1_score': [np.float64(0.019660736984865597), np.float64(0.030822299713160667), np.float64(0.03491242464238576), np.float64(0.03437868161118906), np.float64(0.034017833421331675)]})
+[{'acc': [np.float64(0.9722628433367243), np.float64(0.9781997075279756), np.float64(0.983770981688708), np.float64(0.9785295333163784), np.float64(0.9749809257375381)], 'recall': [np.float64(0.3770681476339234), np.float64(0.28491264607196576), np.float64(0.2768714566701377), np.float64(0.3308457711442786), np.float64(0.36989471248409117)], 'precision': [np.float64(0.01989687647112467), np.float64(0.019151871258080162), np.float64(0.01916889985646305), np.float64(0.018899149397616576), np.float64(0.015507339716231193)], 'f1_score': [np.float64(0.03690821414082521), np.float64(0.034507123049512214), np.float64(0.03456847674709958), np.float64(0.034853478806305474), np.float64(0.0294468265311524)]}, {'acc': [np.float64(0.9699500890132248), np.float64(0.9822370930824008), np.float64(0.9762883074771109), np.float64(0.968634759664293), np.float64(0.9277999427772126)], 'recall': [np.float64(0.3782251533032512), np.float64(0.3397547147981025), np.float64(0.34577114427860695), np.float64(0.34577114427860695), np.float64(0.42572023602915654)], 'precision': [np.float64(0.010101895517369872), np.float64(0.016211431835416235), np.float64(0.018952334808823267), np.float64(0.018771185148197866), np.float64(0.01836080378789416)], 'f1_score': [np.float64(0.019660736984865597), np.float64(0.030822299713160667), np.float64(0.03491242464238576), np.float64(0.03437868161118906), np.float64(0.034017833421331675)]}, {'acc': [np.float64(0.9312730480671414), np.float64(0.9362720943540184), np.float64(0.9400114445574771), np.float64(0.9345872011698881), np.float64(0.9266038275686673)], 'recall': [np.float64(0.48987620039338187), np.float64(0.4970496355432142), np.float64(0.39257202360291565), np.float64(0.3980099502487562), np.float64(0.4027536734930001)], 'precision': [np.float64(0.0056952990508897326), np.float64(0.0066958205666331), np.float64(0.0058400088564731535), np.float64(0.005184563917454336), np.float64(0.004493817372355393)], 'f1_score': [np.float64(0.011235574626930648), np.float64(0.013156982553384895), np.float64(0.011478229620960376), np.float64(0.010187727708927766), np.float64(0.008869156668533017)]}]
+ranks = [[1. 2. 1. 1. 1.]
+ [2. 1. 2. 2. 2.]
+ [3. 3. 3. 3. 3.]]
+avg_anks = [1.2 1.8 3. ]
+CD = 2.0962695320192966
+ranks = [[3. 3. 3. 3. 3.]
+ [2. 2. 2. 2. 1.]
+ [1. 1. 1. 1. 2.]]
+avg_anks = [3.  1.8 1.2]
+CD = 2.0962695320192966
+ranks = [[1. 1. 1. 1. 2.]
+ [2. 2. 2. 2. 1.]
+ [3. 3. 3. 3. 3.]]
+avg_anks = [1.2 1.8 3. ]
+CD = 2.0962695320192966
+ranks = [[1. 1. 2. 1. 2.]
+ [2. 2. 1. 2. 1.]
+ [3. 3. 3. 3. 3.]]
+avg_anks = [1.4 1.6 3. ]
+CD = 2.0962695320192966
+NEMENYI RESULTS: 
+key - f1_score
+[{'method_1': 'G0', 'method_2': 'G1', 'rank_diff': 0.20000000000000018, 'significant': False}, {'method_1': 'G0', 'method_2': 'G2', 'rank_diff': 1.6, 'significant': False}, {'method_1': 'G1', 'method_2': 'G2', 'rank_diff': 1.4, 'significant': False}]
+___________________
+key - f1_score
+[{'method_1': 'G0', 'method_2': 'G1', 'rank_diff': 0.20000000000000018, 'significant': False}, {'method_1': 'G0', 'method_2': 'G2', 'rank_diff': 1.6, 'significant': False}, {'method_1': 'G1', 'method_2': 'G2', 'rank_diff': 1.4, 'significant': False}]
+___________________
+key - f1_score
+[{'method_1': 'G0', 'method_2': 'G1', 'rank_diff': 0.20000000000000018, 'significant': False}, {'method_1': 'G0', 'method_2': 'G2', 'rank_diff': 1.6, 'significant': False}, {'method_1': 'G1', 'method_2': 'G2', 'rank_diff': 1.4, 'significant': False}]
+___________________
+G0 vs G1: W= 2.0 p= 0.1875, n.s.
+G0 vs G2: W= 0.0 p= 0.0625, n.s.
+G1 vs G2: W= 0.0 p= 0.0625, n.s.
+G0 vs G1: W= 0.0 p= 0.0625, n.s.
+G0 vs G2: W= 0.0 p= 0.0625, n.s.
+G1 vs G2: W= 1.0 p= 0.125, n.s.
+G0 vs G1: W= 3.0 p= 0.3125, n.s.
+G0 vs G2: W= 0.0 p= 0.0625, n.s.
+G1 vs G2: W= 0.0 p= 0.0625, n.s.
+G0 vs G1: W= 5.0 p= 0.625, n.s.
+G0 vs G2: W= 0.0 p= 0.0625, n.s.
+G1 vs G2: W= 0.0 p= 0.0625, n.s.

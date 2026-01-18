@@ -1,0 +1,17 @@
+=== WYNIKI TRENINGU ===
+
+___________________________________________________
+
+ 
+ 
+ IMPROVED
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Starting epoch
+epoch 0 stats: {'loss': [0.09211619198322296], 'val_pr_auc': [0.001773220321822945], 'val_f1': [0], 'val_precision': [0], 'val_recall': [0.0]}
+--- Optymalizacja progu ---
+Najlepszy próg: 0.1919
+F1: 0.0253 | Precision: 0.0139 | Recall: 0.1422

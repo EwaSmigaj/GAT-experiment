@@ -11,7 +11,7 @@ from collections import defaultdict
 from training import TrainingProcessor
 from statistical_analysis import StatisticalAnalysis
 import time
-
+from file_logger import log
 
 
 def main():
@@ -22,6 +22,8 @@ def main():
     """
 
     data = gc.prepare_data()
+    data_masks = cv.split(data, 3, 0.6, 0.2)
+
 
     """
     TRAINING
@@ -34,37 +36,48 @@ def main():
     tp_improved = TrainingProcessor("ImprovedGNN")
     tp_simple = TrainingProcessor("SimpleGNN")
 
-    print("\n \n \n SimpleGNN")
-    print("___________________________________________________")
-    r1= tp_simple.cross_validation_training(data)
-    print("\n \n \n ImprovedGNN")
-    print("___________________________________________________")
-    r2= tp_improved.cross_validation_training(data)
-    print("\n \n \n SimpleGAT")
-    print("___________________________________________________")
-    r3= tp_gat.cross_validation_training(data)
-    print("___________________________________________________")
-    print("\n \n \n SimpleGNN - balanced")
-    print("___________________________________________________")
-    r4= tp_simple.cross_validation_training(data, balanced_sampling=True)
-    print("\n \n \n ImprovedGNN - balanced")
-    print("___________________________________________________")
-    r5= tp_improved.cross_validation_training(data, balanced_sampling=True)
-    print("\n \n \n SimpleGAT - balanced")
-    print("___________________________________________________")
-    r6= tp_gat.cross_validation_training(data, balanced_sampling=True)
-    print("___________________________________________________")
+    log("___________________________________________________")
+    log("\n \n \n IMPROVED")
+    log("___________________________________________________")
+    r1= tp_improved.cross_validation_training(data_masks, data)
 
-    r4 = dict(r4)
-    r5 = dict(r5)
-    r6 = dict(r6)
+
+    log("\n \n \n Simple GAT")
+    log("___________________________________________________")
+    r2= tp_gat.cross_validation_training(data_masks, data)
+
+
+    # print("\n \n \n ImprovedGNN")
+    # print("___________________________________________________")
+    # r2= tp_improved.cross_validation_training(data)
+    # print("\n \n \n SimpleGAT")
+    # print("___________________________________________________")
+    # r3= tp_gat.cross_validation_training(data)
+    log("___________________________________________________")
+    log("\n \n \n SimpleGNN")
+    log("___________________________________________________")
+    r3= tp_simple.cross_validation_training(data_masks, data)
+
+    # print("\n \n \n ImprovedGNN - balanced")
+    # print("___________________________________________________")
+    # r5= tp_improved.cross_validation_training(data, balanced_sampling=True)
+    # print("\n \n \n SimpleGAT - balanced")
+    # print("___________________________________________________")
+    # r6= tp_gat.cross_validation_training(data, balanced_sampling=True)
+    # print("___________________________________________________")
 
     r1 = dict(r1)
-    r2 = dict(r2)
+    # r5 = dict(r5)
+    # r6 = dict(r6)
+
+    r2= dict(r2)
+    # r2 = dict(r2)
     r3 = dict(r3)
 
 
-    d = [r1, r2, r3, r4, r5, r6]
+    d = [r1, r2, r3]
+
+    log(d)
 
     """
     results = {

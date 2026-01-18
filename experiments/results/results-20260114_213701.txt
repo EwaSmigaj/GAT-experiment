@@ -1,0 +1,5 @@
+=== WYNIKI TRENINGU ===
+
+
+=== REP 0 ===
+avg_pos_score 0.5641635060310364, avg_neg_score 0.5807608962059021

@@ -2,7 +2,8 @@ import numpy as np
 from scipy.stats import rankdata, studentized_range, wilcoxon, friedmanchisquare
 import math
 from collections import defaultdict
-from itertools import combinations
+from itertools import combinations                                                                                                                                                                                                              
+from file_logger import log
 
 
 class StatisticalAnalysis():

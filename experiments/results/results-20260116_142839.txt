@@ -1,0 +1,19 @@
+=== WYNIKI TRENINGU ===
+
+___________________________________________________
+
+ 
+ 
+ IMPROVED - balanced
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 1.2980 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.577 | NegScore: 0.581
+Epoch 10 | Loss: 0.8098 | Val F1: 0.0479 | Val Rec: 0.5799 | PosScore: 0.705 | NegScore: 0.315
+Epoch 20 | Loss: 0.6490 | Val F1: 0.0748 | Val Rec: 0.5680 | PosScore: 0.763 | NegScore: 0.209
+Epoch 30 | Loss: 0.5134 | Val F1: 0.0678 | Val Rec: 0.7278 | PosScore: 0.816 | NegScore: 0.190
+Epoch 40 | Loss: 0.4383 | Val F1: 0.0405 | Val Rec: 0.8402 | PosScore: 0.854 | NegScore: 0.170
+Fold 0 FINAL: Loss=0.4593, TP=47, TN=118503, FP=7254, FN=20 BEST F1=0.07476635514018691
+Metrics: Acc=0.9422, Rec=0.7015, Prec=0.0064, F1=0.0128

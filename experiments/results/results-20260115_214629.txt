@@ -1,0 +1,1139 @@
+=== WYNIKI TRENINGU ===
+
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.7881 | Val F1: 0.0177 | Val Rec: 0.0118 | PosScore: 0.564 | NegScore: 0.581
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7614 | Val F1: 0.0238 | Val Rec: 0.3787 | PosScore: 0.784 | NegScore: 0.294
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5605 | Val F1: 0.0394 | Val Rec: 0.4911 | PosScore: 0.844 | NegScore: 0.206
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4302 | Val F1: 0.0530 | Val Rec: 0.5740 | PosScore: 0.890 | NegScore: 0.158
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3354 | Val F1: 0.0761 | Val Rec: 0.4024 | PosScore: 0.904 | NegScore: 0.121
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2416, TP=23, TN=119410, FP=6347, FN=44 BEST F1=0.07610520425293787
+Metrics: Acc=0.9492, Rec=0.3433, Prec=0.0036, F1=0.0071
+
+--- Rep 0 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.7538 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.574 | NegScore: 0.578
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7493 | Val F1: 0.0151 | Val Rec: 0.7710 | PosScore: 0.892 | NegScore: 0.246
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3870 | Val F1: 0.0358 | Val Rec: 0.4885 | PosScore: 0.868 | NegScore: 0.109
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2794 | Val F1: 0.0320 | Val Rec: 0.3969 | PosScore: 0.906 | NegScore: 0.085
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2201 | Val F1: 0.0436 | Val Rec: 0.2901 | PosScore: 0.921 | NegScore: 0.063
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0814, TP=53, TN=124253, FP=1442, FN=76 BEST F1=0.043553008595988534
+Metrics: Acc=0.9879, Rec=0.4109, Prec=0.0355, F1=0.0653
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.5258 | Val F1: 0.0047 | Val Rec: 0.0296 | PosScore: 0.568 | NegScore: 0.505
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8231 | Val F1: 0.0181 | Val Rec: 0.4675 | PosScore: 0.693 | NegScore: 0.263
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5676 | Val F1: 0.0328 | Val Rec: 0.4911 | PosScore: 0.803 | NegScore: 0.171
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4626 | Val F1: 0.0384 | Val Rec: 0.3314 | PosScore: 0.900 | NegScore: 0.178
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3644 | Val F1: 0.0385 | Val Rec: 0.4615 | PosScore: 0.860 | NegScore: 0.100
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2369, TP=20, TN=121200, FP=4557, FN=47 BEST F1=0.0384995064165844
+Metrics: Acc=0.9634, Rec=0.2985, Prec=0.0044, F1=0.0086
+
+--- Rep 1 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.6043 | Val F1: 0.0071 | Val Rec: 0.0458 | PosScore: 0.515 | NegScore: 0.497
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.5619 | Val F1: 0.0240 | Val Rec: 0.6336 | PosScore: 0.802 | NegScore: 0.159
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3658 | Val F1: 0.0320 | Val Rec: 0.4733 | PosScore: 0.884 | NegScore: 0.102
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2652 | Val F1: 0.0391 | Val Rec: 0.3435 | PosScore: 0.933 | NegScore: 0.096
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2418 | Val F1: 0.0360 | Val Rec: 0.2977 | PosScore: 0.968 | NegScore: 0.101
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0617, TP=38, TN=124584, FP=1111, FN=91 BEST F1=0.039147455415398
+Metrics: Acc=0.9904, Rec=0.2946, Prec=0.0331, F1=0.0595
+
+=== REP 2 ===
+
+--- Rep 2 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 2.2772 | Val F1: 0.0060 | Val Rec: 0.9112 | PosScore: 0.427 | NegScore: 0.538
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7587 | Val F1: 0.0344 | Val Rec: 0.4734 | PosScore: 0.790 | NegScore: 0.250
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5402 | Val F1: 0.0360 | Val Rec: 0.6154 | PosScore: 0.823 | NegScore: 0.168
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4170 | Val F1: 0.0230 | Val Rec: 0.6746 | PosScore: 0.833 | NegScore: 0.107
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.7597 | Val F1: 0.0412 | Val Rec: 0.3787 | PosScore: 0.645 | NegScore: 0.045
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.1639, TP=21, TN=122739, FP=3018, FN=46 BEST F1=0.041197296427421946
+Metrics: Acc=0.9756, Rec=0.3134, Prec=0.0069, F1=0.0135
+
+--- Rep 2 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 2.0565 | Val F1: 0.0049 | Val Rec: 0.9389 | PosScore: 0.434 | NegScore: 0.512
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8827 | Val F1: 0.0184 | Val Rec: 0.9313 | PosScore: 0.878 | NegScore: 0.245
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.4460 | Val F1: 0.0339 | Val Rec: 0.7252 | PosScore: 0.873 | NegScore: 0.131
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.3186 | Val F1: 0.0281 | Val Rec: 0.4122 | PosScore: 0.915 | NegScore: 0.103
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2438 | Val F1: 0.0403 | Val Rec: 0.3740 | PosScore: 0.933 | NegScore: 0.087
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0582, TP=31, TN=124705, FP=990, FN=98 BEST F1=0.040329218106995884
+Metrics: Acc=0.9914, Rec=0.2403, Prec=0.0304, F1=0.0539
+
+=== REP 3 ===
+
+--- Rep 3 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.9950 | Val F1: 0.0057 | Val Rec: 0.9527 | PosScore: 0.419 | NegScore: 0.507
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8243 | Val F1: 0.0359 | Val Rec: 0.4083 | PosScore: 0.656 | NegScore: 0.178
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5826 | Val F1: 0.0313 | Val Rec: 0.5858 | PosScore: 0.827 | NegScore: 0.207
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4627 | Val F1: 0.0336 | Val Rec: 0.5680 | PosScore: 0.829 | NegScore: 0.128
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3883 | Val F1: 0.0370 | Val Rec: 0.5030 | PosScore: 0.841 | NegScore: 0.100
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2333, TP=23, TN=121636, FP=4121, FN=44 BEST F1=0.036980639547531
+Metrics: Acc=0.9669, Rec=0.3433, Prec=0.0056, F1=0.0109
+
+--- Rep 3 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 2.2075 | Val F1: 0.0048 | Val Rec: 0.9237 | PosScore: 0.350 | NegScore: 0.504
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.5949 | Val F1: 0.0375 | Val Rec: 0.7863 | PosScore: 0.817 | NegScore: 0.189
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3847 | Val F1: 0.0368 | Val Rec: 0.6412 | PosScore: 0.886 | NegScore: 0.122
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2704 | Val F1: 0.0458 | Val Rec: 0.4809 | PosScore: 0.923 | NegScore: 0.090
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2120 | Val F1: 0.0432 | Val Rec: 0.3511 | PosScore: 0.922 | NegScore: 0.060
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.1475, TP=56, TN=122872, FP=2823, FN=73 BEST F1=0.04578488372093023
+Metrics: Acc=0.9770, Rec=0.4341, Prec=0.0195, F1=0.0372
+
+=== REP 4 ===
+
+--- Rep 4 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.9216 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.684 | NegScore: 0.707
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 1.1084 | Val F1: 0.0123 | Val Rec: 0.9527 | PosScore: 0.829 | NegScore: 0.448
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.7209 | Val F1: 0.0379 | Val Rec: 0.5917 | PosScore: 0.804 | NegScore: 0.252
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.5525 | Val F1: 0.0293 | Val Rec: 0.5621 | PosScore: 0.833 | NegScore: 0.176
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.4492 | Val F1: 0.0395 | Val Rec: 0.4675 | PosScore: 0.856 | NegScore: 0.142
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2298, TP=21, TN=121647, FP=4110, FN=46 BEST F1=0.03951975987993998
+Metrics: Acc=0.9670, Rec=0.3134, Prec=0.0051, F1=0.0100
+
+--- Rep 4 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.9451 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.731 | NegScore: 0.731
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8213 | Val F1: 0.0212 | Val Rec: 0.7634 | PosScore: 0.898 | NegScore: 0.327
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.4472 | Val F1: 0.0345 | Val Rec: 0.7176 | PosScore: 0.837 | NegScore: 0.121
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.3259 | Val F1: 0.0346 | Val Rec: 0.5038 | PosScore: 0.880 | NegScore: 0.087
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2540 | Val F1: 0.0398 | Val Rec: 0.4580 | PosScore: 0.925 | NegScore: 0.085
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0979, TP=55, TN=123629, FP=2066, FN=74 BEST F1=0.03980099502487562
+Metrics: Acc=0.9830, Rec=0.4264, Prec=0.0259, F1=0.0489
+defaultdict(<class 'list'>, {'acc': [np.float64(0.9685711787894202), np.float64(0.9769280900305188), np.float64(0.9835007629704984), np.float64(0.9719409651576806), np.float64(0.9749809257375381)], 'recall': [np.float64(0.3770681476339234), np.float64(0.29654055304870997), np.float64(0.2768714566701377), np.float64(0.3886960546106676), np.float64(0.36989471248409117)], 'precision': [np.float64(0.01953109002798444), np.float64(0.018720955593420997), np.float64(0.018636278816134617), np.float64(0.012500695691473739), np.float64(0.015507339716231193)], 'f1_score': [np.float64(0.03620856103606689), np.float64(0.03404059152503306), np.float64(0.03371762927293597), np.float64(0.024078906814472733), np.float64(0.0294468265311524)]})
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.5655 | Val F1: 0.0244 | Val Rec: 0.0651 | PosScore: 0.563 | NegScore: 0.591
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.6994 | Val F1: 0.0270 | Val Rec: 0.5976 | PosScore: 0.767 | NegScore: 0.253
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5394 | Val F1: 0.0388 | Val Rec: 0.5207 | PosScore: 0.814 | NegScore: 0.188
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4127 | Val F1: 0.0302 | Val Rec: 0.4911 | PosScore: 0.846 | NegScore: 0.148
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3507 | Val F1: 0.0329 | Val Rec: 0.5148 | PosScore: 0.869 | NegScore: 0.122
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.1754, TP=17, TN=122602, FP=3155, FN=50 BEST F1=0.038809261300992284
+Metrics: Acc=0.9745, Rec=0.2537, Prec=0.0054, F1=0.0105
+
+--- Rep 0 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.5157 | Val F1: 0.0281 | Val Rec: 0.0992 | PosScore: 0.541 | NegScore: 0.510
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.4608 | Val F1: 0.0370 | Val Rec: 0.7023 | PosScore: 0.840 | NegScore: 0.134
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.2996 | Val F1: 0.0420 | Val Rec: 0.5573 | PosScore: 0.898 | NegScore: 0.095
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2435 | Val F1: 0.0427 | Val Rec: 0.4962 | PosScore: 0.898 | NegScore: 0.066
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2026 | Val F1: 0.0546 | Val Rec: 0.3817 | PosScore: 0.941 | NegScore: 0.075
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.1683, TP=61, TN=121591, FP=4104, FN=68 BEST F1=0.054614964500273075
+Metrics: Acc=0.9668, Rec=0.4729, Prec=0.0146, F1=0.0284
+
+=== REP 1 ===
+
+--- Rep 1 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.6989 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.666 | NegScore: 0.638
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8280 | Val F1: 0.0441 | Val Rec: 0.4911 | PosScore: 0.649 | NegScore: 0.228
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5502 | Val F1: 0.0318 | Val Rec: 0.5207 | PosScore: 0.761 | NegScore: 0.166
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4433 | Val F1: 0.0351 | Val Rec: 0.5562 | PosScore: 0.859 | NegScore: 0.173
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3640 | Val F1: 0.0533 | Val Rec: 0.4852 | PosScore: 0.884 | NegScore: 0.139
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.1387, TP=18, TN=123541, FP=2216, FN=49 BEST F1=0.053281351526965566
+Metrics: Acc=0.9820, Rec=0.2687, Prec=0.0081, F1=0.0156
+
+--- Rep 1 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.6196 | Val F1: 0.0037 | Val Rec: 1.0000 | PosScore: 0.396 | NegScore: 0.406
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.5014 | Val F1: 0.0387 | Val Rec: 0.6183 | PosScore: 0.759 | NegScore: 0.150
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3267 | Val F1: 0.0299 | Val Rec: 0.4198 | PosScore: 0.904 | NegScore: 0.123
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2277 | Val F1: 0.0343 | Val Rec: 0.4427 | PosScore: 0.932 | NegScore: 0.087
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.1925 | Val F1: 0.0377 | Val Rec: 0.2824 | PosScore: 0.942 | NegScore: 0.075
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.1130, TP=53, TN=123565, FP=2130, FN=76 BEST F1=0.03867271425161137
+Metrics: Acc=0.9825, Rec=0.4109, Prec=0.0243, F1=0.0458
+
+=== REP 2 ===
+
+--- Rep 2 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.6835 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.579 | NegScore: 0.596
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7202 | Val F1: 0.0420 | Val Rec: 0.6213 | PosScore: 0.671 | NegScore: 0.208
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.4956 | Val F1: 0.0357 | Val Rec: 0.7219 | PosScore: 0.833 | NegScore: 0.175
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4045 | Val F1: 0.0289 | Val Rec: 0.6095 | PosScore: 0.832 | NegScore: 0.131
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3490 | Val F1: 0.0644 | Val Rec: 0.4675 | PosScore: 0.909 | NegScore: 0.148
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2306, TP=24, TN=121045, FP=4712, FN=43 BEST F1=0.06438467807660962
+Metrics: Acc=0.9622, Rec=0.3582, Prec=0.0051, F1=0.0100
+
+--- Rep 2 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.9360 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.717 | NegScore: 0.738
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7029 | Val F1: 0.0189 | Val Rec: 0.9618 | PosScore: 0.949 | NegScore: 0.319
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3583 | Val F1: 0.0375 | Val Rec: 0.4656 | PosScore: 0.871 | NegScore: 0.111
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2626 | Val F1: 0.0286 | Val Rec: 0.4733 | PosScore: 0.913 | NegScore: 0.097
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.2210 | Val F1: 0.0440 | Val Rec: 0.4427 | PosScore: 0.931 | NegScore: 0.083
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0685, TP=41, TN=124569, FP=1126, FN=88 BEST F1=0.04398938187334092
+Metrics: Acc=0.9904, Rec=0.3178, Prec=0.0351, F1=0.0633
+
+=== REP 3 ===
+
+--- Rep 3 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.6045 | Val F1: 0.0041 | Val Rec: 0.9467 | PosScore: 0.385 | NegScore: 0.422
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.7597 | Val F1: 0.0323 | Val Rec: 0.5385 | PosScore: 0.744 | NegScore: 0.273
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5345 | Val F1: 0.0429 | Val Rec: 0.5976 | PosScore: 0.816 | NegScore: 0.185
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4275 | Val F1: 0.0465 | Val Rec: 0.4911 | PosScore: 0.863 | NegScore: 0.161
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3525 | Val F1: 0.0475 | Val Rec: 0.4556 | PosScore: 0.913 | NegScore: 0.153
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 0 FINAL: Loss=0.2461, TP=24, TN=120426, FP=5331, FN=43 BEST F1=0.047516198704103674
+Metrics: Acc=0.9573, Rec=0.3582, Prec=0.0045, F1=0.0089
+
+--- Rep 3 | Fold 1 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.2622 | Val F1: 0.0087 | Val Rec: 0.0840 | PosScore: 0.610 | NegScore: 0.487
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.4860 | Val F1: 0.0312 | Val Rec: 0.9160 | PosScore: 0.861 | NegScore: 0.154
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.3549 | Val F1: 0.0364 | Val Rec: 0.4962 | PosScore: 0.900 | NegScore: 0.128
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.2620 | Val F1: 0.0381 | Val Rec: 0.4656 | PosScore: 0.936 | NegScore: 0.106
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.1942 | Val F1: 0.0395 | Val Rec: 0.3588 | PosScore: 0.928 | NegScore: 0.072
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Fold 1 FINAL: Loss=0.0686, TP=43, TN=124497, FP=1198, FN=86 BEST F1=0.039512400168137875
+Metrics: Acc=0.9898, Rec=0.3333, Prec=0.0346, F1=0.0628
+
+=== REP 4 ===
+
+--- Rep 4 | Fold 0 ---
+Learning Rate: 0.01
+Epoch 00 | Loss: 1.5438 | Val F1: 0.0030 | Val Rec: 1.0000 | PosScore: 0.331 | NegScore: 0.347
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 10 | Loss: 0.8149 | Val F1: 0.0372 | Val Rec: 0.4970 | PosScore: 0.789 | NegScore: 0.320
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 20 | Loss: 0.5542 | Val F1: 0.0299 | Val Rec: 0.4497 | PosScore: 0.795 | NegScore: 0.181
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 30 | Loss: 0.4335 | Val F1: 0.0427 | Val Rec: 0.5148 | PosScore: 0.861 | NegScore: 0.170
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Epoch 40 | Loss: 0.3518 | Val F1: 0.0495 | Val Rec: 0.4852 | PosScore: 0.863 | NegScore: 0.119
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01
+Learning Rate: 0.01

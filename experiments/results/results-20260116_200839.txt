@@ -1,0 +1,101 @@
+=== WYNIKI TRENINGU ===
+
+___________________________________________________
+
+ 
+ 
+ IMPROVED
+___________________________________________________
+
+=== REP 0 ===
+
+--- Rep 0 | Fold 0 ---
+Epoch 00 | Loss: 0.5927 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.431 | NegScore: 0.430
+Epoch 10 | Loss: 0.2127 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.285 | NegScore: 0.066
+Epoch 20 | Loss: 0.1526 | Val F1: 0.0942 | Val Rec: 0.0776 | PosScore: 0.486 | NegScore: 0.040
+Epoch 30 | Loss: 0.1205 | Val F1: 0.1462 | Val Rec: 0.2155 | PosScore: 0.676 | NegScore: 0.053
+Epoch 40 | Loss: 0.0872 | Val F1: 0.1316 | Val Rec: 0.2155 | PosScore: 0.723 | NegScore: 0.035
+Epoch 50 | Loss: 0.0729 | Val F1: 0.1274 | Val Rec: 0.4052 | PosScore: 0.733 | NegScore: 0.021
+Epoch 60 | Loss: 0.0604 | Val F1: 0.1338 | Val Rec: 0.3621 | PosScore: 0.842 | NegScore: 0.029
+Epoch 70 | Loss: 0.0509 | Val F1: 0.1390 | Val Rec: 0.4397 | PosScore: 0.815 | NegScore: 0.013
+Epoch 80 | Loss: 0.0469 | Val F1: 0.1269 | Val Rec: 0.4310 | PosScore: 0.853 | NegScore: 0.017
+Epoch 90 | Loss: 0.0404 | Val F1: 0.1372 | Val Rec: 0.4310 | PosScore: 0.866 | NegScore: 0.014
+Epoch 99 | Loss: 0.0322 | Val F1: 0.1130 | Val Rec: 0.4655 | PosScore: 0.870 | NegScore: 0.010
+Fold 0 FINAL: Loss=0.0883, TP=54, TN=82981, FP=786, FN=62 BEST F1=0.14619883040935674
+Metrics: Acc=0.9899, Rec=0.4655, Prec=0.0643, F1=0.1130
+BEST T = 0.9999938011169434
+
+--- Rep 0 | Fold 1 ---
+Epoch 00 | Loss: 0.8724 | Val F1: 0.0014 | Val Rec: 0.9583 | PosScore: 0.016 | NegScore: 0.002
+Epoch 10 | Loss: 0.1638 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.359 | NegScore: 0.026
+Epoch 20 | Loss: 0.1161 | Val F1: 0.0851 | Val Rec: 0.1667 | PosScore: 0.650 | NegScore: 0.045
+Epoch 30 | Loss: 0.0880 | Val F1: 0.0552 | Val Rec: 0.1667 | PosScore: 0.669 | NegScore: 0.021
+Epoch 40 | Loss: 0.0593 | Val F1: 0.0421 | Val Rec: 0.1667 | PosScore: 0.830 | NegScore: 0.025
+Epoch 50 | Loss: 0.0348 | Val F1: 0.0385 | Val Rec: 0.1667 | PosScore: 0.874 | NegScore: 0.012
+Epoch 60 | Loss: 0.0272 | Val F1: 0.0307 | Val Rec: 0.2083 | PosScore: 0.904 | NegScore: 0.010
+Epoch 70 | Loss: 0.0268 | Val F1: 0.0629 | Val Rec: 0.2083 | PosScore: 0.872 | NegScore: 0.003
+Epoch 80 | Loss: 0.0368 | Val F1: 0.0356 | Val Rec: 0.2083 | PosScore: 0.958 | NegScore: 0.021
+Epoch 90 | Loss: 0.0203 | Val F1: 0.0524 | Val Rec: 0.2083 | PosScore: 0.893 | NegScore: 0.003
+Epoch 99 | Loss: 0.0125 | Val F1: 0.0399 | Val Rec: 0.2500 | PosScore: 0.940 | NegScore: 0.004
+Fold 1 FINAL: Loss=0.0287, TP=6, TN=83588, FP=271, FN=18 BEST F1=0.0851063829787234
+Metrics: Acc=0.9966, Rec=0.2500, Prec=0.0217, F1=0.0399
+BEST T = 0.9885913729667664
+
+--- Rep 0 | Fold 2 ---
+Epoch 00 | Loss: 0.7827 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.521 | NegScore: 0.259
+Epoch 10 | Loss: 0.1976 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.383 | NegScore: 0.075
+Epoch 20 | Loss: 0.1486 | Val F1: 0.0000 | Val Rec: 0.0000 | PosScore: 0.519 | NegScore: 0.041
+Epoch 30 | Loss: 0.1232 | Val F1: 0.1509 | Val Rec: 0.2857 | PosScore: 0.595 | NegScore: 0.031
+Epoch 40 | Loss: 0.1080 | Val F1: 0.1804 | Val Rec: 0.6571 | PosScore: 0.735 | NegScore: 0.038
+Epoch 50 | Loss: 0.0900 | Val F1: 0.3333 | Val Rec: 0.3143 | PosScore: 0.652 | NegScore: 0.017
+Epoch 60 | Loss: 0.0687 | Val F1: 0.5955 | Val Rec: 0.7571 | PosScore: 0.818 | NegScore: 0.023
+Epoch 70 | Loss: 0.0649 | Val F1: 0.5067 | Val Rec: 0.8143 | PosScore: 0.862 | NegScore: 0.028
+Epoch 80 | Loss: 0.0525 | Val F1: 0.4891 | Val Rec: 0.8000 | PosScore: 0.791 | NegScore: 0.009
+Epoch 90 | Loss: 0.0486 | Val F1: 0.4043 | Val Rec: 0.8000 | PosScore: 0.879 | NegScore: 0.022
+Epoch 99 | Loss: 0.0426 | Val F1: 0.3836 | Val Rec: 0.8000 | PosScore: 0.820 | NegScore: 0.008
+Fold 2 FINAL: Loss=0.0250, TP=56, TN=83647, FP=166, FN=14 BEST F1=0.5955056179775281
+Metrics: Acc=0.9979, Rec=0.8000, Prec=0.2523, F1=0.3836
+BEST T = 0.9854968190193176
+
+=== REP 1 ===
+
+=== REP 2 ===
+
+=== REP 3 ===
+
+=== REP 4 ===
+defaultdict(<class 'list'>, {'acc': [np.float64(0.9947665200338567)], 'recall': [np.float64(0.5051724137931034)], 'precision': [np.float64(0.11273287211915368)], 'f1_score': [np.float64(0.1787998215890797)]})
+
+ 
+ 
+ Simple GAT
+___________________________________________________
+
+=== REP 0 ===
+
+=== REP 1 ===
+
+=== REP 2 ===
+
+=== REP 3 ===
+
+=== REP 4 ===
+defaultdict(<class 'list'>, {})
+___________________________________________________
+
+ 
+ 
+ SimpleGNN
+___________________________________________________
+
+=== REP 0 ===
+
+=== REP 1 ===
+
+=== REP 2 ===
+
+=== REP 3 ===
+
+=== REP 4 ===
+defaultdict(<class 'list'>, {})
+[{}, {}, {'acc': [np.float64(0.9947665200338567)], 'recall': [np.float64(0.5051724137931034)], 'precision': [np.float64(0.11273287211915368)], 'f1_score': [np.float64(0.1787998215890797)]}]
