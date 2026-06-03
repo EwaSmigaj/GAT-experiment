@@ -2,22 +2,25 @@ import pandas as pd
 import numpy as np
 import torch
 from typing import Dict, Tuple
-import graph_creation as gc
-import cross_validation as cv
-from gnn import SimpleGNN, ImprovedGNN, SimpleGAT, AdvancedGNN
+import graph.graph_creation as gc
+from trainingloop import cross_validation as cv
+from models import SimpleGAT2, SimpleGNN, AdvancedGNN, ImprovedGNN
 from torch_geometric.nn import SAGEConv, to_hetero
 import torch.nn.functional as F
 from collections import defaultdict
-from file_logger import log
+from evaluation.file_logger import log
+from evaluation.statistical_analysis import StatisticalAnalysis
 from sklearn.metrics import precision_recall_curve, auc, average_precision_score, f1_score, precision_score, recall_score
 import matplotlib.pyplot as plt
+from models.external.simpleHGN import SimpleHGN
 
 
 class TrainingProcessor():
-    def __init__(self, model_name, n_reps=15):
+    def __init__(self, model_name, n_reps=2, n_epochs=100):
+        self.n_epochs = n_epochs
         self.model_name = model_name
         self.n_reps = n_reps
-        self.predictor = EdgePredictor(node_out_channels=64, edge_attr_channels=22)
+        self.predictor = self.EdgePredictor(node_out_channels=64, edge_attr_channels=22)
 
     def cross_validation_training(self, data_masks, data):
 
@@ -54,7 +57,7 @@ class TrainingProcessor():
                 # -------------------------------
                 # Trening
                 # -------------------------------
-                for epoch in range(100):
+                for epoch in range(self.n_epochs):
                     loss, avg_pos_score, avg_neg_score = self._train(model, optimizer, data, train_mask)
 
                     if epoch % 10 == 0 or epoch == 99:
@@ -161,38 +164,26 @@ class TrainingProcessor():
 
         return results
 
-
     def _train(self, model, optimizer, data, mask):
         model.train()
-        self.predictor.train()
         optimizer.zero_grad()
 
-        current_et = ('user', 'transacts', 'merchant')
+        # Forward pass
+        h_dict = model(data, data.ndata['h'])
 
-        train_batch_idx = torch.where(mask)[0]
+        # Wyciągnij embeddingi i labele dla węzłów transaction
+        logits = h_dict['transaction'][mask]
+        labels = data.nodes['transaction'].data['label'][mask].long()
 
-        # 2. Forward pass (Embeddingi węzłów)
-        h_dict = model(data.x_dict, data.edge_index_dict)
+        loss = F.cross_entropy(logits, labels)
 
-        # 3. Wyciągnięcie danych dla wybranych krawędzi
-        edge_index = data[current_et].edge_index[:, train_batch_idx]
-        edge_attr = data[current_et].edge_attr[train_batch_idx]
-        row, col = edge_index
-        labels = data[current_et].edge_label[train_batch_idx].float()
-
-        # 4. Predykcja
-        out = self.predictor(h_dict['user'][row], h_dict['merchant'][col], edge_attr)
-
-        p_weight = torch.tensor([1.0]).to(out.device) 
-        loss = F.binary_cross_entropy_with_logits(out, labels, pos_weight=p_weight)
-        
         with torch.no_grad():
-            probs = torch.sigmoid(out)
+            probs = torch.softmax(logits, dim=1)[:, 1]
             avg_pos_score = probs[labels == 1].mean().item() if (labels == 1).any() else 0.0
             avg_neg_score = probs[labels == 0].mean().item() if (labels == 0).any() else 0.0
 
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(list(model.parameters()) + list(self.predictor.parameters()), max_norm=1.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
 
         return loss.item(), avg_pos_score, avg_neg_score
@@ -200,25 +191,14 @@ class TrainingProcessor():
     @torch.no_grad()
     def _test(self, model, data, mask):
         model.eval()
-        self.predictor.eval() # Set both to eval mode
 
-        # 1. Get Node Embeddings
-        h_dict = model(data.x_dict, data.edge_index_dict)
-        
-        # 2. Get Edge Data
-        current_et = ('user', 'transacts', 'merchant')
-        edge_index = data[current_et].edge_index[:, mask]
-        edge_attr = data[current_et].edge_attr[mask]
-        row, col = edge_index
-        
-        z_src = h_dict['user'][row]
-        z_dst = h_dict['merchant'][col]
-        out = self.predictor(z_src, z_dst, edge_attr)
+        h_dict = model(data, data.ndata['h'])
 
-        labels = data[current_et].edge_label[mask].float()
-        loss = F.binary_cross_entropy_with_logits(out, labels)
+        logits = h_dict['transaction'][mask]
+        labels = data.nodes['transaction'].data['label'][mask].long()
 
-        probs = out.sigmoid()
+        loss = F.cross_entropy(logits, labels)
+        probs = torch.softmax(logits, dim=1)[:, 1]
 
         return loss.item(), probs.cpu(), labels.cpu()
 
@@ -316,13 +296,28 @@ class TrainingProcessor():
         if self.model_name == "SimpleGNN":
             model = SimpleGNN(hidden_channels=64, out_channels=64, seed=rep)
         elif self.model_name == "ImprovedGNN":
-            model = AdvancedGNN(hidden_channels=64, out_channels=64, seed=rep)
+            model =  AdvancedGNN(hidden_channels=64, out_channels=64, seed=rep)
         elif self.model_name == "SimpleGAT":
-            model = SimpleGAT(hidden_channels=64, out_channels=64, seed=rep)
+            model = SimpleGAT2(hidden_channels=64, out_channels=64, seed=rep)
         else:
-            model = SimpleGNN(hidden_channels=64, out_channels=64, seed=rep)
+            print("SIMPLE HGN!!!!")
+            torch.manual_seed(rep)
+            model = SimpleHGN(
+                edge_dim=8,
+                num_etypes=len(data.etypes),
+                in_dim=[32],
+                hidden_dim=16,
+                num_classes=2,
+                num_layers=2,
+                heads=[4, 4, 1],
+                feat_drop=0.1,
+                negative_slope=0.2,
+                residual=True,
+                beta=0.1,
+                ntypes=data.ntypes
+                )
         
-        return to_hetero(model, data.metadata())
+        return model
 
     def _calc_pos_weight(self, labels):
         num_neg = (labels == 0).sum()  
@@ -365,18 +360,17 @@ class TrainingProcessor():
         mcen = 0.5 * (cen0 + cen1)
         return mcen
 
+    class EdgePredictor(torch.nn.Module):
+        def __init__(self, node_out_channels, edge_attr_channels):
+            super().__init__()
+            # Input: src_node_emb + dst_node_emb + edge_features
+            input_dim = (node_out_channels * 2) + edge_attr_channels
+            self.lin = torch.nn.Sequential(
+                torch.nn.Linear(input_dim, 64),
+                torch.nn.ReLU(),
+                torch.nn.Linear(64, 1)
+            )
 
-class EdgePredictor(torch.nn.Module):
-    def __init__(self, node_out_channels, edge_attr_channels):
-        super().__init__()
-        # Input: src_node_emb + dst_node_emb + edge_features
-        input_dim = (node_out_channels * 2) + edge_attr_channels
-        self.lin = torch.nn.Sequential(
-            torch.nn.Linear(input_dim, 64),
-            torch.nn.ReLU(),
-            torch.nn.Linear(64, 1)
-        )
-
-    def forward(self, z_src, z_dst, edge_attr):
-        x = torch.cat([z_src, z_dst, edge_attr], dim=-1)
-        return self.lin(x).view(-1)
+        def forward(self, z_src, z_dst, edge_attr):
+            x = torch.cat([z_src, z_dst, edge_attr], dim=-1)
+            return self.lin(x).view(-1)

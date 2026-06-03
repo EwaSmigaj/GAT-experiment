@@ -12,13 +12,6 @@ from pandas import DataFrame
 
 # --- Stałe (Configuration) ---
 DATA_PATH = "../data/gold/"
-RANDOM_STATE = 42
-HIDDEN_CHANNELS = 64
-EPOCHS = 200
-PATIENCE = 50
-LEARNING_RATE = 0.001
-WEIGHT_DECAY = 5e-4
-MODEL_FILENAME = 'best_fraud_gnn.pt'
 
 
 def load_dataframes() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -207,11 +200,6 @@ def process_node_features(users: pd.DataFrame, merchants: pd.DataFrame) -> Heter
     print("Processing Node features...")
 
     data = HeteroData()
-
-    # print(f"users")
-    # users.info()
-    # print(f"MMMMM")
-    # merchants.info()
     
     scaler_user = StandardScaler()
     user_features_scaled = scaler_user.fit_transform(users)

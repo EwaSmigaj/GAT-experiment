@@ -3,7 +3,9 @@ from scipy.stats import rankdata, studentized_range, wilcoxon, friedmanchisquare
 import math
 from collections import defaultdict
 from itertools import combinations                                                                                                                                                                                                              
-from file_logger import log
+from evaluation.file_logger import log
+import matplotlib.pyplot as plt
+import networkx as nx
 
 
 class StatisticalAnalysis():
@@ -54,7 +56,7 @@ class StatisticalAnalysis():
         #     (...),
         #     'recall': [[0.43, 0.22, 0.11],[1.43, 1.22, 1.11],[2.43, 2.22, 2.11]]
         # }
-
+        print(data)
         d = defaultdict(list)
         for g in data:
             for key in g.keys():
@@ -194,3 +196,97 @@ class StatisticalAnalysis():
                     + "W= " + str(r['W']) + " p= " + str(round(r['p_uncorrected'], 4)) + ", "
                     + str('SIGNIFICANT' if r['significant'] else 'n.s.')
                 )
+
+
+def plot_nemenyi_cd(ranks, cd, title="Critical Difference (Nemenyi)"):
+    """
+    Plots a Critical Difference diagram for the Nemenyi test.
+    
+    Args:
+        ranks (dict): Dictionary of {method_name: average_rank}
+        cd (float): The Critical Difference value (e.g., 1.21)
+        title (str): Title of the plot
+    """
+    # 1. Sort ranks
+    sorted_ranks = sorted(ranks.items(), key=lambda x: x[1])
+    methods, rank_values = zip(*sorted_ranks)
+    
+    # 2. Setup Plot
+    fig, ax = plt.subplots(figsize=(8, 3))
+    ax.set_title(title, pad=20, fontsize=14)
+    
+    # Define range for the axis (invert so 1 is on the left or right depending on preference)
+    # Standard CD diagrams usually put lower rank (better) on the left or right.
+    # We will put Best (1.0) on the Left.
+    low, high = 1, len(methods)
+    ax.set_xlim(low - 0.5, high + 0.5)
+    ax.set_ylim(0, 1)
+    
+    # Draw the main axis line
+    ax.hlines(0.2, low, high, color='black', linewidth=1.5)
+    
+    # Add Tick Markers
+    for i in range(low, high + 1):
+        ax.vlines(i, 0.2, 0.25, color='black')
+        ax.text(i, 0.28, str(i), ha='center', va='bottom', fontsize=10)
+    
+    # 3. Plot Methods and Ranks
+    # We stagger heights to prevent text overlap if ranks are close
+    levels = [0.2, 0.05, 0.2, 0.05] # Toggle heights for labels
+    
+    for i, (method, r) in enumerate(zip(methods, rank_values)):
+        # Draw marker on line
+        ax.plot(r, 0.2, 'o', color='black', markersize=6)
+        
+        # Draw text label with line pointing to marker
+        level = 0.05 if i % 2 == 0 else 0.45 # Alternate label positions (top/bottom)
+        va = 'top' if level < 0.2 else 'bottom'
+        
+        # Line from axis to label
+        ax.plot([r, r], [0.2, level], '-', color='gray', linewidth=0.8)
+        
+        # Label text
+        ax.text(r, level, f"{method}\n({r:.2f})", ha='center', va=va, fontsize=11, fontweight='bold')
+
+    # 4. Draw Connecting Bars for Non-Significant Differences
+    # We look for groups where max_rank - min_rank < CD
+    # Simple logic: Connect consecutive models if diff < CD
+    # (For 3 models, we just check pairs manually for the line drawing)
+    
+    y_bar = 0.25 # Height for connection bars
+    
+    # Check cliques/groups
+    # Group 1: G0 & G1? (2.93 - 1.87 = 1.06 < 1.21) -> YES
+    # Group 2: G1 & G2? (1.87 - 1.20 = 0.67 < 1.21) -> YES
+    # Group 3: G0 & G2? (2.93 - 1.20 = 1.73 > 1.21) -> NO
+    
+    # Draw bar for G2-G1
+    if abs(ranks['G1'] - ranks['G2']) < cd:
+        ax.hlines(y_bar + 0.02, ranks['G2'], ranks['G1'], color='red', linewidth=3, label='Not Sig.')
+        
+    # Draw bar for G1-G0
+    if abs(ranks['G0'] - ranks['G1']) < cd:
+         # Shift y slightly up if overlapping, or use same line if distinct
+        ax.hlines(y_bar + 0.02, ranks['G1'], ranks['G0'], color='red', linewidth=3)
+
+    # 5. Add CD ruler (visual guide)
+    ax.hlines(0.8, low, low + cd, color='black', linewidth=2)
+    ax.vlines(low, 0.78, 0.82, color='black')
+    ax.vlines(low + cd, 0.78, 0.82, color='black')
+    ax.text(low + cd/2, 0.85, f"CD = {cd:.3f}", ha='center', fontsize=10)
+
+    # Clean up
+    ax.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+# --- INPUT DATA FROM YOUR RESULTS ---
+# Ranks for F1-Score
+ranks_f1 = {
+    'G0': 2.933,
+    'G1': 1.867,
+    'G2': 1.200
+}
+cd_value = 1.210
+
+# plot_nemenyi_cd(ranks_f1, cd_value, title="F1-Score Comparison (Nemenyi Test)")
