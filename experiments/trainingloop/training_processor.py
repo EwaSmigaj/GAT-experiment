@@ -16,7 +16,7 @@ from models.external.simpleHGN import SimpleHGN
 
 
 class TrainingProcessor():
-    def __init__(self, model_name, n_reps=2, n_epochs=100):
+    def __init__(self, model_name, n_reps=3, n_epochs=100):
         self.n_epochs = n_epochs
         self.model_name = model_name
         self.n_reps = n_reps
