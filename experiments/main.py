@@ -12,6 +12,9 @@ from trainingloop.training_processor import TrainingProcessor
 import time
 from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
+import os
+import os
+from dgl import save_graphs, load_graphs
 
 
 def main():
@@ -19,61 +22,51 @@ def main():
     GRAPH CREATION
     """
 
-    graph_path = "my_saved_graph.dgl"
+    graph_path = "my_saved_graph_u300.dgl"
 
     if os.path.exists(graph_path):
-        # Wczytaj graf, jeśli plik już istnieje
         glist, _ = load_graphs(graph_path)
         data = glist[0]
         print("Graf załadowany z pliku.")
     else:
-        # Zbuduj graf i zapisz go na przyszłość
-        data = build_dgl_graph(max_users=100) # Twoje parametry
-        save_graphs(graph_path, [hg])
-    print("Graf utworzony i zapisany do pliku.")
+        data = gc.build_dgl_graph(max_users=300) 
+        save_graphs(graph_path, [data])
+        print("Graf utworzony i zapisany do pliku.")
 
 
     print(f"data = {data}")
     print({ntype: data.nodes[ntype].data['h'].shape for ntype in data.ntypes})
 
-    model = SimpleHGN(
-    edge_dim=8,
-    num_etypes=len(data.etypes),
-    in_dim=[32],
-    hidden_dim=64,
-    num_classes=2,
-    num_layers=3,
-    heads=[4, 4, 1],
-    feat_drop=0.1,
-    negative_slope=0.2,
-    residual=True,
-    beta=0.1,
-    ntypes=data.ntypes
-    )
-
     h_dict = model(data, data.ndata['h'])
-    print(h_dict['transaction'].shape)  # powinno być [28882, 2]
-#_____________________________OLD
+
     data_masks = cv.split(data, 3, 0.6, 0.2)
 
     """
     TRAINING
     """
 
-    tp_hgn = TrainingProcessor("DDDD")
-    tp_simple = TrainingProcessor("SimpleGAT")
+    tp_hgn = TrainingProcessor("SimpleHGN")
+    tp_hgn_low_loss = TrainingProcessor("SimpleHGN", loss=0.5)
+    tp_hgn_200_epochs = TrainingProcessor("SimpleHGN", n_epochs=200)
+    tp_hgn_200_epochs_low_loss = TrainingProcessor("SimpleHGN", loss=0.5, n_epochs=200)
 
-    log("___________________________________________________")
-    log("\n \n \n IMPROVED")
-    log("___________________________________________________")
-    r2= tp_simple.cross_validation_training(data_masks, data)
+
     r1= tp_hgn.cross_validation_training(data_masks, data)
+
+    r2= tp_hgn_200_epochs.cross_validation_training(data_masks, data)
+
+    r3= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data)
+
+    r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
+
     
 
     r1 = dict(r1)
     r2 = dict(r2)
+    r3 = dict(r3)
+    r4 = dict(r4)
 
-    d = [r2, r1, r1]
+    d = [r1, r2, r3, r4]
 
     log(d)
 

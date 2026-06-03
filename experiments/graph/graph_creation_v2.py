@@ -5,10 +5,10 @@ import dgl
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import torch.nn as nn
 
-def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ibm_v2.csv", 
-                    cards_path="../data/brown/sd254_cards.csv", 
-                    users_path="../data/brown/sd254_users.csv", 
-                    max_users=100):
+def build_dgl_graph(transactions_path="../data/credit_card_transactions-ibm_v2.csv", 
+                    cards_path="../data/sd254_cards.csv", 
+                    users_path="../data/sd254_users.csv", 
+                    max_users=1000):
 
     # ── Wczytaj dane ─────────────────────────────────────────────────
     tx    = pd.read_csv(transactions_path)

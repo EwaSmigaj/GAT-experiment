@@ -16,7 +16,8 @@ from models.external.simpleHGN import SimpleHGN
 
 
 class TrainingProcessor():
-    def __init__(self, model_name, n_reps=3, n_epochs=100):
+    def __init__(self, model_name, n_reps=3, n_epochs=100, loss=1.0):
+        self.loss_ind = loss
         self.n_epochs = n_epochs
         self.model_name = model_name
         self.n_reps = n_reps
@@ -175,7 +176,12 @@ class TrainingProcessor():
         logits = h_dict['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
-        loss = F.cross_entropy(logits, labels)
+        # 1. Oblicz wagi przed treningiem (lub w trakcie)
+        pos_weight = self._calc_pos_weight(data.nodes['transaction'].data['label'][mask])
+        class_weights = torch.tensor([1.0, pos_weight], dtype=torch.float32).to(logits.device)
+
+        # 2. Przekaż wagi do funkcji straty
+        loss = F.cross_entropy(logits, labels, weight=class_weights)
 
         with torch.no_grad():
             probs = torch.softmax(logits, dim=1)[:, 1]
@@ -197,7 +203,11 @@ class TrainingProcessor():
         logits = h_dict['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
-        loss = F.cross_entropy(logits, labels)
+        # 1. Oblicz wagi przed treningiem (lub w trakcie)
+        pos_weight = self._calc_pos_weight(data.nodes['transaction'].data['label'][mask])
+        class_weights = torch.tensor([1.0, pos_weight], dtype=torch.float32).to(logits.device)
+
+        loss = F.cross_entropy(logits, labels, weight=class_weights)
         probs = torch.softmax(logits, dim=1)[:, 1]
 
         return loss.item(), probs.cpu(), labels.cpu()
@@ -294,11 +304,11 @@ class TrainingProcessor():
 
     def _pick_model(self, rep, data):
         if self.model_name == "SimpleGNN":
-            model = SimpleGNN(hidden_channels=64, out_channels=64, seed=rep)
+            model = SimpleGNN(hidden_channels=64, out_channels=2, seed=rep)
         elif self.model_name == "ImprovedGNN":
-            model =  AdvancedGNN(hidden_channels=64, out_channels=64, seed=rep)
+            model =  AdvancedGNN(hidden_channels=64, out_channels=2, seed=rep)
         elif self.model_name == "SimpleGAT":
-            model = SimpleGAT2(hidden_channels=64, out_channels=64, seed=rep)
+            model = SimpleGAT2(hidden_channels=64, out_channels=2, seed=rep)
         else:
             print("SIMPLE HGN!!!!")
             torch.manual_seed(rep)
@@ -323,7 +333,7 @@ class TrainingProcessor():
         num_neg = (labels == 0).sum()  
         num_pos = (labels == 1).sum()  
         pos_weight = num_neg / num_pos  
-        return pos_weight
+        return self.loss_ind*pos_weight
 
     def _compute_mcen(self, confusion_matrix, eps=1e-12):
         """
