@@ -1,386 +1,252 @@
-import pandas as pd
 import numpy as np
 import torch
-from typing import Dict, Tuple
-import graph.graph_creation as gc
-from trainingloop import cross_validation as cv
-from models import SimpleGAT2, SimpleGNN, AdvancedGNN, ImprovedGNN
-from torch_geometric.nn import SAGEConv, to_hetero
+import torch.nn as nn
 import torch.nn.functional as F
 from collections import defaultdict
+from sklearn.metrics import average_precision_score, precision_recall_curve
 from evaluation.file_logger import log
-from evaluation.statistical_analysis import StatisticalAnalysis
-from sklearn.metrics import precision_recall_curve, auc, average_precision_score, f1_score, precision_score, recall_score
-import matplotlib.pyplot as plt
 from models.external.simpleHGN import SimpleHGN
 
 
-class TrainingProcessor():
-    def __init__(self, model_name, n_reps=3, n_epochs=100, loss=1.0):
-        self.loss_ind = loss
-        self.n_epochs = n_epochs
+class FocalLoss(nn.Module):
+    def __init__(self, weight=None, gamma=2.0):
+        super().__init__()
+        self.weight = weight
+        self.gamma = gamma
+
+    def forward(self, logits, labels):
+        # reduction='none' aby policzyć wagę dla każdej próbki
+        ce_loss = F.cross_entropy(logits, labels, weight=self.weight, reduction='none')
+        pt = torch.exp(-ce_loss)
+        focal_loss = ((1 - pt) ** self.gamma) * ce_loss
+        return focal_loss.mean()
+
+
+class InputEncoder(nn.Module):
+    """Trenowalna projekcja per typ węzła -> wspólny wymiar proj_dim."""
+
+    def __init__(self, hg, proj_dim: int = 32):
+        super().__init__()
+        self.encoders = nn.ModuleDict({
+            ntype: nn.Linear(hg.nodes[ntype].data['h_raw'].shape[1], proj_dim)
+            for ntype in hg.ntypes
+        })
+
+    def forward(self, hg):
+        return {ntype: enc(hg.nodes[ntype].data['h_raw'])
+                for ntype, enc in self.encoders.items()}
+
+
+class TrainingProcessor:
+
+    def __init__(self, model_name, n_reps=3, n_epochs=100, loss_mul=1.0):
         self.model_name = model_name
-        self.n_reps = n_reps
-        self.predictor = self.EdgePredictor(node_out_channels=64, edge_attr_channels=22)
+        self.n_reps     = n_reps
+        self.n_epochs   = n_epochs
+        self.loss_mul   = loss_mul
+
+    # ──────────────────────────────────────────────────────────────────
+    # Public
+    # ──────────────────────────────────────────────────────────────────
 
     def cross_validation_training(self, data_masks, data):
-
         results = defaultdict(list)
-        all_epoch_stats = []  # do wykresów
 
         for rep in range(self.n_reps):
             log(f"\n=== REP {rep} ===")
-            fold_results = defaultdict(list)
-            fold_confusion_matrices = []
+            fold_results  = defaultdict(list)
+            fold_cms      = []
             fold_mcen_aux = []
 
             for fold_idx, (train_mask, val_mask, test_mask) in enumerate(data_masks):
+
+                labels = data.nodes['transaction'].data['label']
+
+                for mask, name in [(train_mask, 'train'), (val_mask, 'val'), (test_mask, 'test')]:
+                    n_pos = labels[mask].sum().item()
+                    n_neg = (labels[mask] == 0).sum().item()
+                    log(f"  {name:>5}: fraud={n_pos:>6}  non-fraud={n_neg:>8}  ratio={n_pos/(n_neg+1e-9):.4f}")
+
                 log(f"\n--- Rep {rep} | Fold {fold_idx} ---")
 
-                model = self._pick_model(rep, data)
+                model, encoder = self._build(rep, data)
                 optimizer = torch.optim.Adam(
-                    list(model.parameters()) + list(self.predictor.parameters()), lr=0.01
+                    list(model.parameters()) + list(encoder.parameters()), lr=0.01
+                )
+                scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                    optimizer, mode='max', factor=0.5, patience=3
                 )
 
-                best_val_pr_auc = -1
-                best_epoch = -1
-                best_model_state = None
-                best_predictor_state = None
+                # pos_weight raz z train_mask – nie przeliczamy w _eval_step
+                train_labels = data.nodes['transaction'].data['label'][train_mask]
+                pos_weight   = self._calc_pos_weight(train_labels)
 
-                # Statystyki per epoka
-                epoch_stats = {
-                    "loss": [], "val_pr_auc": [], "val_f1": [],
-                    "val_precision": [], "val_recall": []
-                }
+                best_pr_auc      = -1
+                best_epoch       = -1
+                best_model_state = best_encoder_state = None
+                epoch_stats      = defaultdict(list)
 
                 log("Starting epoch")
-
-                # -------------------------------
-                # Trening
-                # -------------------------------
                 for epoch in range(self.n_epochs):
-                    loss, avg_pos_score, avg_neg_score = self._train(model, optimizer, data, train_mask)
+                    self._train_step(model, encoder, optimizer, data, train_mask, pos_weight)
 
-                    if epoch % 10 == 0 or epoch == 99:
-                        
-                        val_loss, val_probs, val_labels = self._test(model, data, val_mask)
-                        # Tymczasowy threshold 0.5 dla monitorowania
-                        val_metrics = self._eval_with_threshold(val_probs, val_labels, threshold=0.5)
+                    if epoch % 10 == 0 or epoch == self.n_epochs - 1:
+                        val_loss, val_probs, val_labels = self._eval_step(
+                            model, encoder, data, val_mask, pos_weight)
                         pr_auc = average_precision_score(val_labels.numpy(), val_probs.numpy())
+                        m      = self._eval_with_threshold(val_probs, val_labels, 0.5)
 
-                        # Zapis statystyk
                         epoch_stats["loss"].append(val_loss)
                         epoch_stats["val_pr_auc"].append(pr_auc)
-                        epoch_stats["val_f1"].append(val_metrics["f1"])
-                        epoch_stats["val_precision"].append(val_metrics["precision"])
-                        epoch_stats["val_recall"].append(val_metrics["recall"])
+                        epoch_stats["val_f1"].append(m["f1"])
+                        epoch_stats["val_precision"].append(m["precision"])
+                        epoch_stats["val_recall"].append(m["recall"])
 
-                        log(f"epoch {epoch} stats: {epoch_stats}")
+                        last_epoch_stats = defaultdict()
+                        for key in epoch_stats.keys():
+                            last_epoch_stats[key] = epoch_stats[key][-1]
 
-                        # Wybór najlepszej epoki
-                        if pr_auc > best_val_pr_auc:
-                            best_val_pr_auc = pr_auc
-                            best_epoch = epoch
-                            best_model_state = {k: v.cpu() for k, v in model.state_dict().items()}
-                            best_predictor_state = {k: v.cpu() for k, v in self.predictor.state_dict().items()}
 
-                # -------------------------------
-                # Najlepsza epoka i treshold
-                # -------------------------------
+                        log(f"epoch {epoch} stats: {dict(last_epoch_stats)}")
+
+                        scheduler.step(pr_auc)
+
+                        if pr_auc > best_pr_auc:
+                            best_pr_auc      = pr_auc
+                            best_epoch       = epoch
+                            best_model_state   = {k: v.cpu() for k, v in model.state_dict().items()}
+                            best_encoder_state = {k: v.cpu() for k, v in encoder.state_dict().items()}
+
+                # Restore best checkpoint
                 model.load_state_dict(best_model_state)
-                self.predictor.load_state_dict(best_predictor_state)
+                encoder.load_state_dict(best_encoder_state)
 
-                _, val_probs, val_labels = self._test(model, data, val_mask)
-                best_threshold = self._find_best_threshold(val_labels.numpy(), val_probs.numpy())
+                _, val_probs, val_labels = self._eval_step(model, encoder, data, val_mask, pos_weight)
+                threshold = self._find_best_threshold(val_labels.numpy(), val_probs.numpy())
 
-                # -------------------------------
-                # Test końcowy
-                # -------------------------------
-                _, test_probs, test_labels = self._test(model, data, test_mask)
-                test_metrics = self._eval_with_threshold(test_probs, test_labels, best_threshold)
+                _, test_probs, test_labels = self._eval_step(model, encoder, data, test_mask, pos_weight)
+                test_m = self._eval_with_threshold(test_probs, test_labels, threshold)
 
-                fold_confusion_matrices.append(test_metrics["confusion_matrix"])
-                fold_mcen_aux.append(test_metrics["mcen"])
+                fold_cms.append(test_m["confusion_matrix"])
+                fold_mcen_aux.append(test_m["mcen"])
+                fold_results["acc"].append(test_m["acc"])
+                fold_results["recall"].append(test_m["recall"])
+                fold_results["precision"].append(test_m["precision"])
+                fold_results["f1_score"].append(test_m["f1"])
 
-                fold_results["acc"].append(test_metrics['acc'])
-                fold_results["recall"].append(test_metrics['recall'])
-                fold_results["precision"].append(test_metrics['precision'])
-                fold_results["f1_score"].append(test_metrics['f1'])
+                log(f"Fold {fold_idx} | BEST EPOCH={best_epoch} | PR-AUC(val)={best_pr_auc:.4f} | "
+                    f"Threshold={threshold:.3f} | Test F1={test_m['f1']:.4f} | "
+                    f"Precision={test_m['precision']:.4f} | Recall={test_m['recall']:.4f} | "
+                    f"MCEN(aux)={test_m['mcen']:.4f}")
 
-                log(f"Fold {fold_idx} | BEST EPOCH={best_epoch} | PR-AUC(val)={best_val_pr_auc:.4f} | "
-                    f"Threshold={best_threshold:.3f} | Test F1={test_metrics['f1']:.4f} | "
-                    f"Precision={test_metrics['precision']:.4f} | Recall={test_metrics['recall']:.4f} | "
-                    f"MCEN(aux)={test_metrics['mcen']:.4f}")
+            for k in fold_results:
+                results[k].append(np.mean(fold_results[k]))
 
-                # Zapis statystyk per fold do wykresów
-                all_epoch_stats.append(epoch_stats)
+            global_cm = sum(fold_cms)
+            log(f"MCEN global = {self._compute_mcen(global_cm):.4f}")
+            log(f"MCEN per fold: mean={np.mean(fold_mcen_aux):.4f}, std={np.std(fold_mcen_aux):.4f}")
 
-            # -------------------------------
-            # Agregacja wyników foldów
-            # -------------------------------
-            for key in fold_results.keys():
-                results[key].append(np.mean(fold_results[key]))
-
-            cm_total = np.zeros((2, 2), dtype=int)
-            for cm in fold_confusion_matrices:
-                cm_total += cm
-
-            global_mcen = self._compute_mcen(cm_total)
-            aux_mean = np.mean(fold_mcen_aux)
-            aux_std = np.std(fold_mcen_aux)
-
-            log(f"MCEN global = {global_mcen:.4f}")
-            log(f"MCEN per fold (auxiliary): mean={aux_mean:.4f}, std={aux_std:.4f}")
-
-        # -------------------------------
-        # Wykres agregowany po wszystkich rep/fold
-        # -------------------------------
-        def plot_mean_training_curve(all_epoch_stats, metric="val_f1"):
-            min_len = min(len(e[metric]) for e in all_epoch_stats)
-            metric_values = np.array([e[metric][:min_len] for e in all_epoch_stats])
-            mean_metric = metric_values.mean(axis=0)
-            std_metric = metric_values.std(axis=0)
-            epochs = len(mean_metric)
-
-            plt.figure(figsize=(8,5))
-            plt.plot(range(1, epochs+1), mean_metric, label=f"mean {metric}")
-            plt.fill_between(range(1, epochs+1),
-                            mean_metric - std_metric,
-                            mean_metric + std_metric,
-                            alpha=0.2)
-            plt.xlabel("Epoch")
-            plt.ylabel(metric)
-            plt.title(f"{metric} vs Epochs (mean ± std across folds and reps)")
-            plt.legend()
-            plt.grid(True)
-            plt.show()
-
-        # Rysowanie wykresów raportowych
-        # plot_mean_training_curve(all_epoch_stats, metric="val_f1")
-        # plot_mean_training_curve(all_epoch_stats, metric="val_pr_auc")
-        # plot_mean_training_curve(all_epoch_stats, metric="loss")
-
-        print(f"cv training results = {results}")
-        log(results)
-
+        log(f"cv training results = {dict(results)}")
         return results
 
-    def _train(self, model, optimizer, data, mask):
-        model.train()
+    # ──────────────────────────────────────────────────────────────────
+    # Internals
+    # ──────────────────────────────────────────────────────────────────
+
+    def _build(self, rep, data):
+        torch.manual_seed(rep)
+        encoder = InputEncoder(data, proj_dim=32)
+        model   = SimpleHGN(
+            edge_dim=8,
+            num_etypes=len(data.etypes),
+            in_dim=[32],
+            hidden_dim=16,
+            num_classes=2,
+            num_layers=2,
+            heads=[4, 4, 1],
+            feat_drop=0.1,
+            negative_slope=0.2,
+            residual=True,
+            beta=0.1,
+            ntypes=data.ntypes,
+        )
+        return model, encoder
+
+    def _train_step(self, model, encoder, optimizer, data, mask, pos_weight):
+        model.train(); encoder.train()
         optimizer.zero_grad()
 
-        # Forward pass
-        h_dict = model(data, data.ndata['h'])
-
-        # Wyciągnij embeddingi i labele dla węzłów transaction
-        logits = h_dict['transaction'][mask]
+        h_dict = encoder(data)
+        logits = model(data, h_dict)['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
-        # 1. Oblicz wagi przed treningiem (lub w trakcie)
-        pos_weight = self._calc_pos_weight(data.nodes['transaction'].data['label'][mask])
-        class_weights = torch.tensor([1.0, pos_weight], dtype=torch.float32).to(logits.device)
-
-        # 2. Przekaż wagi do funkcji straty
-        loss = F.cross_entropy(logits, labels, weight=class_weights)
-
-        with torch.no_grad():
-            probs = torch.softmax(logits, dim=1)[:, 1]
-            avg_pos_score = probs[labels == 1].mean().item() if (labels == 1).any() else 0.0
-            avg_neg_score = probs[labels == 0].mean().item() if (labels == 0).any() else 0.0
+        # Użycie Focal Loss
+        weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=logits.device)
+        focal_criterion = FocalLoss(weight=weight, gamma=2.0)
+        loss = focal_criterion(logits, labels)
 
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        nn.utils.clip_grad_norm_(
+            list(model.parameters()) + list(encoder.parameters()), max_norm=1.0
+        )
         optimizer.step()
-
-        return loss.item(), avg_pos_score, avg_neg_score
+        return loss.item()
 
     @torch.no_grad()
-    def _test(self, model, data, mask):
-        model.eval()
+    def _eval_step(self, model, encoder, data, mask, pos_weight):
+        model.eval(); encoder.eval()
 
-        h_dict = model(data, data.ndata['h'])
-
-        logits = h_dict['transaction'][mask]
+        h_dict = encoder(data)
+        logits = model(data, h_dict)['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
-        # 1. Oblicz wagi przed treningiem (lub w trakcie)
-        pos_weight = self._calc_pos_weight(data.nodes['transaction'].data['label'][mask])
-        class_weights = torch.tensor([1.0, pos_weight], dtype=torch.float32).to(logits.device)
-
-        loss = F.cross_entropy(logits, labels, weight=class_weights)
+        # Użycie Focal Loss
+        weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=logits.device)
+        focal_criterion = FocalLoss(weight=weight, gamma=2.0)
+        loss = focal_criterion(logits, labels)
+        
         probs = torch.softmax(logits, dim=1)[:, 1]
-
         return loss.item(), probs.cpu(), labels.cpu()
 
     def _find_best_threshold(self, y_true, y_probs):
-        best_threshold = 0.5
-        best_f1 = 0
-        
-        thresholds = np.linspace(0, 1, 100)
-        
-        for t in thresholds:
-            y_pred = (y_probs >= t).astype(int)
-            current_f1 = f1_score(y_true, y_pred, zero_division=0)
-            if current_f1 > best_f1:
-                best_f1 = current_f1
-                best_threshold = t
-
-        # dodatkowe metryki dla logów
-        y_pred_best = (y_probs >= best_threshold).astype(int)
-        prec = precision_score(y_true, y_pred_best, zero_division=0)
-        rec = recall_score(y_true, y_pred_best, zero_division=0)
-
-        log(f"--- Optymalizacja progu ---")
-        log(f"Najlepszy próg: {best_threshold:.4f}")
-        log(f"F1: {best_f1:.4f} | Precision: {prec:.4f} | Recall: {rec:.4f}")
-        
-        return best_threshold
-
-
-    def _plot_precision_recall(self, y_true, y_probs):
-        # 1. Obliczanie punktów krzywej
         precision, recall, thresholds = precision_recall_curve(y_true, y_probs)
-        
-        # 2. Obliczanie pola pod krzywą (Average Precision)
-        ap_score = average_precision_score(y_true, y_probs)
-        
-        # 3. Znalezienie najlepszego punktu F1 na krzywej
-        f1_scores = 2 * (precision * recall) / (precision + recall + 1e-10)
-        best_idx = np.argmax(f1_scores)
-        best_t = thresholds[best_idx] if best_idx < len(thresholds) else 1.0
-        
-        return best_t
+        f1  = 2 * precision * recall / (precision + recall + 1e-10)
+        idx = int(np.argmax(f1[:-1]))   # thresholds ma len-1 elementów
+        t   = float(thresholds[idx])
+        log(f"--- Optymalizacja progu ---")
+        log(f"Najlepszy próg: {t:.4f}")
+        log(f"F1: {f1[idx]:.4f} | Precision: {precision[idx]:.4f} | Recall: {recall[idx]:.4f}")
+        return t
 
     def _eval_with_threshold(self, probs, labels, threshold):
-        preds = (probs >= threshold).int()
+        preds  = (probs  >= threshold).int()
         labels = labels.int()
-
         tp = ((preds == 1) & (labels == 1)).sum().item()
         tn = ((preds == 0) & (labels == 0)).sum().item()
         fp = ((preds == 1) & (labels == 0)).sum().item()
         fn = ((preds == 0) & (labels == 1)).sum().item()
-
-        acc = self._count_acc(tp, tn, fp, fn)
-        prec = self._count_precision(tp, tn, fp, fn)
-        rec = self._count_recall(tp, tn, fp, fn)
-        f1 = self._count_f1(tp, tn, fp, fn)
-
-        confusion_matrix = np.array([
-            [tn, fp],
-            [fn, tp]
-        ])
-        mcen = self._compute_mcen(confusion_matrix)
-
-        return {
-            "tp": tp, "tn": tn, "fp": fp, "fn": fn,
-            "acc": acc, "precision": prec,
-            "recall": rec, "f1": f1,
-            "confusion_matrix": confusion_matrix,
-            "mcen": mcen
-        }
-
-    def _count_acc(self, tp, tn, fp, fn):
-        total = tp + tn + fp + fn
-        if total == 0:
-            return 0
-        return (tp + tn) / total
-
-    def _count_precision(self, tp, tn, fp, fn):
-        if (tp + fp) == 0:
-            return 0
-        return tp / (tp + fp)
-
-    def _count_recall(self, tp, tn, fp, fn):
-        if (tp + fn) == 0:
-            return 0
-        return tp / (tp + fn)
-
-    def _count_f1(self, tp, tn, fp, fn):
-        precision = self._count_precision(tp, tn, fp, fn)
-        recall = self._count_recall(tp, tn, fp, fn)
-        if (precision + recall) == 0:
-            return 0
-        return 2 * (precision * recall) / (precision + recall)
-
-    def _pick_model(self, rep, data):
-        if self.model_name == "SimpleGNN":
-            model = SimpleGNN(hidden_channels=64, out_channels=2, seed=rep)
-        elif self.model_name == "ImprovedGNN":
-            model =  AdvancedGNN(hidden_channels=64, out_channels=2, seed=rep)
-        elif self.model_name == "SimpleGAT":
-            model = SimpleGAT2(hidden_channels=64, out_channels=2, seed=rep)
-        else:
-            print("SIMPLE HGN!!!!")
-            torch.manual_seed(rep)
-            model = SimpleHGN(
-                edge_dim=8,
-                num_etypes=len(data.etypes),
-                in_dim=[32],
-                hidden_dim=16,
-                num_classes=2,
-                num_layers=2,
-                heads=[4, 4, 1],
-                feat_drop=0.1,
-                negative_slope=0.2,
-                residual=True,
-                beta=0.1,
-                ntypes=data.ntypes
-                )
-        
-        return model
+        eps  = 1e-12
+        prec = tp / (tp + fp + eps)
+        rec  = tp / (tp + fn + eps)
+        f1   = 2 * prec * rec / (prec + rec + eps)
+        cm   = np.array([[tn, fp], [fn, tp]])
+        return {"tp": tp, "tn": tn, "fp": fp, "fn": fn,
+                "acc": (tp + tn) / (tp + tn + fp + fn + eps),
+                "precision": prec, "recall": rec, "f1": f1,
+                "confusion_matrix": cm, "mcen": self._compute_mcen(cm)}
 
     def _calc_pos_weight(self, labels):
-        num_neg = (labels == 0).sum()  
-        num_pos = (labels == 1).sum()  
-        pos_weight = num_neg / num_pos  
-        return self.loss_ind*pos_weight
+        n_neg = (labels == 0).sum().item()
+        n_pos = (labels == 1).sum().item()
+        return self.loss_mul * n_neg / max(n_pos, 1)
 
-    def _compute_mcen(self, confusion_matrix, eps=1e-12):
-        """
-        MCEN for binary classification
-        confusion_matrix:
-            [[TN, FP],
-            [FN, TP]]
-        """
-        cm = confusion_matrix.astype(float)
+    def _compute_mcen(self, cm, eps=1e-12):
+        cm = np.array(cm, dtype=float)
+        TN, FP, FN, TP = cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1]
+        d0 = (TN + FP) + (TN + FN)
+        d1 = (FN + TP) + (FP + TP)
+        c0 = -(FP / (d0 + eps)) * np.log(FP / (d0 + eps) + eps) if FP > 0 else 0.0
+        c1 = -(FN / (d1 + eps)) * np.log(FN / (d1 + eps) + eps) if FN > 0 else 0.0
+        return 0.5 * (c0 + c1)
 
-        TN, FP = cm[0, 0], cm[0, 1]
-        FN, TP = cm[1, 0], cm[1, 1]
-
-        # Row and column sums
-        row0 = TN + FP
-        row1 = FN + TP
-        col0 = TN + FN
-        col1 = FP + TP
-
-        # Denominators
-        denom0 = row0 + col0
-        denom1 = row1 + col1
-
-        cen0 = 0.0
-        if FP > 0:
-            p0 = FP / (denom0 + eps)
-            cen0 = -p0 * np.log(p0 + eps)
-
-        cen1 = 0.0
-        if FN > 0:
-            p1 = FN / (denom1 + eps)
-            cen1 = -p1 * np.log(p1 + eps)
-
-        mcen = 0.5 * (cen0 + cen1)
-        return mcen
-
-    class EdgePredictor(torch.nn.Module):
-        def __init__(self, node_out_channels, edge_attr_channels):
-            super().__init__()
-            # Input: src_node_emb + dst_node_emb + edge_features
-            input_dim = (node_out_channels * 2) + edge_attr_channels
-            self.lin = torch.nn.Sequential(
-                torch.nn.Linear(input_dim, 64),
-                torch.nn.ReLU(),
-                torch.nn.Linear(64, 1)
-            )
-
-        def forward(self, z_src, z_dst, edge_attr):
-            x = torch.cat([z_src, z_dst, edge_attr], dim=-1)
-            return self.lin(x).view(-1)
+        

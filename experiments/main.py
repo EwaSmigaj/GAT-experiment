@@ -13,7 +13,6 @@ import time
 from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
 import os
-import os
 from dgl import save_graphs, load_graphs
 
 
@@ -22,22 +21,21 @@ def main():
     GRAPH CREATION
     """
 
-    graph_path = "my_saved_graph_u300.dgl"
+    graph_path = "my_saved_graph_u500.dgl"
 
     if os.path.exists(graph_path):
         glist, _ = load_graphs(graph_path)
         data = glist[0]
         print("Graf załadowany z pliku.")
     else:
-        data = gc.build_dgl_graph(max_users=300) 
+        data = gc.build_dgl_graph(max_users=500) 
         save_graphs(graph_path, [data])
         print("Graf utworzony i zapisany do pliku.")
 
 
     print(f"data = {data}")
-    print({ntype: data.nodes[ntype].data['h'].shape for ntype in data.ntypes})
+    print({ntype: data.nodes[ntype].data['h_raw'].shape for ntype in data.ntypes})
 
-    h_dict = model(data, data.ndata['h'])
 
     data_masks = cv.split(data, 3, 0.6, 0.2)
 
@@ -46,9 +44,9 @@ def main():
     """
 
     tp_hgn = TrainingProcessor("SimpleHGN")
-    tp_hgn_low_loss = TrainingProcessor("SimpleHGN", loss=0.5)
-    tp_hgn_200_epochs = TrainingProcessor("SimpleHGN", n_epochs=200)
-    tp_hgn_200_epochs_low_loss = TrainingProcessor("SimpleHGN", loss=0.5, n_epochs=200)
+    tp_hgn_200_epochs = TrainingProcessor("SimpleHGN", n_epochs=300)
+    tp_hgn_low_loss = TrainingProcessor("SimpleHGN", loss_mul=0.5)
+    tp_hgn_200_epochs_low_loss = TrainingProcessor("SimpleHGN", loss_mul=0.5, n_epochs=200)
 
 
     r1= tp_hgn.cross_validation_training(data_masks, data)
@@ -60,7 +58,6 @@ def main():
     r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
 
     
-
     r1 = dict(r1)
     r2 = dict(r2)
     r3 = dict(r3)

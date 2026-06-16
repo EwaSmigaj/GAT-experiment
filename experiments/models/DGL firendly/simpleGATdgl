@@ -1,0 +1,63 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import dgl.nn.pytorch as dglnn
+
+class SimpleGAT_DGL(nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, ntypes, etypes, seed=None):
+        super().__init__()
+        if seed is not None: 
+            torch.manual_seed(seed)
+            
+        # 1. Konwolucje GAT dla każdej relacji (krawędzi)
+        self.conv1 = dglnn.HeteroGraphConv({
+            etype: dglnn.GATConv(in_channels, hidden_channels, num_heads=1, allow_zero_in_degree=True)
+            for etype in etypes
+        }, aggregate='sum')
+        
+        # Skip connections (Linear) dla każdego typu węzła osobno
+        self.lin1 = nn.ModuleDict({
+            ntype: nn.Linear(in_channels, hidden_channels) for ntype in ntypes
+        })
+        
+        # 2. Druga warstwa
+        self.conv2 = dglnn.HeteroGraphConv({
+            etype: dglnn.GATConv(hidden_channels, out_channels, num_heads=1, allow_zero_in_degree=True)
+            for etype in etypes
+        }, aggregate='sum')
+        
+        self.lin2 = nn.ModuleDict({
+            ntype: nn.Linear(hidden_channels, out_channels) for ntype in ntypes
+        })
+
+    def forward(self, g, x_dict):
+        # x_dict to słownik tensorów, np. {'user': tensor, 'transaction': tensor}
+        
+        # --- WARSTWA 1 ---
+        h1_dict = self.conv1(g, x_dict)
+        out1_dict = {}
+        
+        for ntype, x in x_dict.items():
+            if ntype in h1_dict:
+                # GATConv w DGL domyślnie dodaje wymiar głów (N, num_heads, H). 
+                # Używamy 1 głowy, więc pozbywamy się tego wymiaru za pomocą squeeze()
+                h_conv = h1_dict[ntype].squeeze(1) 
+            else:
+                # Obsługa węzłów, do których nie wchodzą żadne krawędzie
+                h_conv = torch.zeros((x.shape[0], self.lin1[ntype].out_features), device=x.device)
+                
+            out1_dict[ntype] = F.relu(h_conv + self.lin1[ntype](x))
+
+        # --- WARSTWA 2 ---
+        h2_dict = self.conv2(g, out1_dict)
+        out2_dict = {}
+        
+        for ntype, x in out1_dict.items():
+            if ntype in h2_dict:
+                h_conv = h2_dict[ntype].squeeze(1)
+            else:
+                h_conv = torch.zeros((x.shape[0], self.lin2[ntype].out_features), device=x.device)
+                
+            out2_dict[ntype] = h_conv + self.lin2[ntype](x)
+            
+        return out2_dict

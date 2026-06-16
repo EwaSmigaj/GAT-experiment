@@ -4,7 +4,7 @@ from torch_geometric.data import HeteroData
 from typing import List, Tuple, Optional
 import numpy as np
 
-def split(hg, n_splits, train_ratio, val_ratio, neg_to_pos_ratio=10, seed=None):
+def split(hg, n_splits, train_ratio, val_ratio, neg_to_pos_ratio=100, seed=None):
     labels = hg.nodes['transaction'].data['label']
     num_nodes = labels.shape[0]
     
