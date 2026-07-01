@@ -55,8 +55,9 @@ def main():
     # r1= tp_hgn.cross_validation_training(data_masks, data)
 
     # r2= tp_hgn_200_epochs.cross_validation_training(data_masks, data)
-    r_time= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True)
-    r_base= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False)
+    # r_time= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True)
+    # r_base= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False)
+    r_contrastive = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False, contrastive=True)
 
     # r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
 
@@ -64,10 +65,10 @@ def main():
     # r1 = dict(r1)
     # r2 = dict(r2)
     # r3 = dict(r3)
-    r_base = dict(r_base)
-    r_time = dict(r_time)
+    r_base = dict(r_contrastive)
+    # r_time = dict(r_time)
 
-    d = [r_base, r_time]
+    d = [r_base]
 
     log(d)
 

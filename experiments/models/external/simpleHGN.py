@@ -101,17 +101,20 @@ class SimpleHGN(nn.Module):
                    args.beta,
                    hg.ntypes,
                    getattr(args, 'use_time', False),
+                   getattr(args, 'contrastive', False)
                    )
 
     def __init__(self, edge_dim, num_etypes, in_dim, hidden_dim, num_classes,
                 num_layers, heads, feat_drop, negative_slope,
-                residual, beta, ntypes, use_time=False):
+                residual, beta, ntypes, use_time=False, contrastive=False):
         super(SimpleHGN, self).__init__()
         self.ntypes = ntypes
         self.num_layers = num_layers
         self.use_time = use_time
         self.hgn_layers = nn.ModuleList()
         self.activation = F.elu
+        self.contrastive=contrastive
+
 
         # input projection (no residual)
         self.hgn_layers.append(
@@ -163,7 +166,7 @@ class SimpleHGN(nn.Module):
             )
         )
 
-    def forward(self, hg, h_dict):
+    def forward(self, hg, h_dict, return_hidden=False):
         """
         The forward part of the SimpleHGN.
 
@@ -189,25 +192,27 @@ class SimpleHGN(nn.Module):
 
             if self.use_time and 'time' in g.edata:
                 t = g.edata['time'].float()
-                time_valid = (t != 0)                        # maska na ORYGINALNYCH wartościach
+                time_valid = (t != 0)
                 t_norm = torch.zeros_like(t)
                 if time_valid.any():
                     t_vals = t[time_valid]
                     t_norm[time_valid] = (t_vals - t_vals.mean()) / (t_vals.std() + 1e-8)
-                timestamps = t_norm
-                timestamps_mask = time_valid.float()         # przekazywana osobno, nie rekomputowana
+                timestamps, timestamps_mask = t_norm, time_valid.float()
             else:
-                timestamps = None
-                timestamps_mask = None
+                timestamps = timestamps_mask = None
 
+            h_hidden = None
             for l in range(self.num_layers):
                 h = self.hgn_layers[l](g, h, g.ndata['_TYPE'], g.edata['_TYPE'], True,
-                                        timestamps=timestamps,
-                                        timestamps_mask=timestamps_mask)   # <-- nowy arg
+                                    timestamps=timestamps, timestamps_mask=timestamps_mask)
                 h = h.flatten(1)
+                if return_hidden and l == self.num_layers - 2:   # embedding przed warstwą wyjściową
+                    h_hidden = h
 
-        h_dict = to_hetero_feat(h, g.ndata['_TYPE'], hg.ntypes)
-        return h_dict
+            h_dict = to_hetero_feat(h, g.ndata['_TYPE'], hg.ntypes)
+            if return_hidden:
+                return h_dict, to_hetero_feat(h_hidden, g.ndata['_TYPE'], hg.ntypes)
+            return h_dict
 
     @property
     def to_homo_flag(self):
@@ -375,3 +380,54 @@ def to_hetero_feat(h, ntype, ntypes):
         mask = (ntype == i)
         h_dict[ntype_name] = h[mask]
     return h_dict
+
+class ProjectionHead(nn.Module):
+    """Osobna głowa do przestrzeni kontrastywnej; odrzucana przy inferencji."""
+    def __init__(self, in_dim, hidden_dim=64, out_dim=32):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden_dim),
+            nn.ReLU(inplace=True),
+            nn.Linear(hidden_dim, out_dim),
+        )
+
+    def forward(self, x):
+        return F.normalize(self.net(x), dim=-1)
+
+
+class SupervisedContrastiveLoss(nn.Module):
+    def __init__(self, temperature=0.07):
+        super().__init__()
+        self.temperature = temperature
+
+    def forward(self, z, labels):
+        B = z.shape[0]
+        labels = labels.view(-1, 1)
+
+        pos_mask = torch.eq(labels, labels.T).float()
+        self_mask = torch.eye(B, device=z.device)
+        pos_mask = pos_mask - self_mask
+
+        sim = (z @ z.T) / self.temperature
+        sim = sim - sim.max(dim=1, keepdim=True).values.detach()
+
+        exp_sim = torch.exp(sim) * (1 - self_mask)
+        log_prob = sim - torch.log(exp_sim.sum(dim=1, keepdim=True) + 1e-12)
+
+        pos_count = pos_mask.sum(dim=1)
+        valid = pos_count > 0
+        if not valid.any():
+            return sim.sum() * 0.0   # brak crasha autograd, zerowy wkład
+
+        loss = -(pos_mask * log_prob).sum(dim=1)[valid] / pos_count[valid]
+        return loss.mean()
+
+
+def sample_contrastive_subset(labels, neg_per_pos=8, max_size=4000):
+    """Cały fraud + losowy multiplikat non-fraud. Bez tego: O(N²) na ~37k+ węzłach = OOM."""
+    pos_idx = (labels == 1).nonzero(as_tuple=True)[0]
+    neg_idx_all = (labels == 0).nonzero(as_tuple=True)[0]
+
+    n_neg = min(len(neg_idx_all), len(pos_idx) * neg_per_pos, max(max_size - len(pos_idx), 0))
+    perm = torch.randperm(len(neg_idx_all), device=neg_idx_all.device)[:n_neg]
+    return torch.cat([pos_idx, neg_idx_all[perm]])

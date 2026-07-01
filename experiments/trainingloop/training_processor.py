@@ -7,6 +7,7 @@ from sklearn.metrics import average_precision_score, precision_recall_curve
 from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
 import random
+from models.external.simpleHGN import ProjectionHead, SupervisedContrastiveLoss, sample_contrastive_subset
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -53,7 +54,7 @@ class TrainingProcessor:
     # Public
     # ──────────────────────────────────────────────────────────────────
 
-    def cross_validation_training(self, data_masks, data, seed=10, use_time=False):
+    def cross_validation_training(self, data_masks, data, seed=10, use_time=False, contrastive=False):
         data = data.to(device) 
         data_masks = [(tr.to(device), vl.to(device), te.to(device))
                   for tr, vl, te in data_masks]
@@ -86,7 +87,7 @@ class TrainingProcessor:
 
                 log(f"\n--- Rep {rep} | Fold {fold_idx} ---")
 
-                model, encoder = self._build(rep, data, use_time)
+                model, encoder = self._build(rep, data, use_time, contrastive)
                 optimizer = torch.optim.Adam(
                     list(model.parameters()) + list(encoder.parameters()), lr=0.001
                 )
@@ -103,9 +104,23 @@ class TrainingProcessor:
                 best_model_state = best_encoder_state = None
                 epoch_stats      = defaultdict(list)
 
+                hidden_dim = 16 * 4  # hidden_dim * heads[-2]
+                projection_head = ProjectionHead(in_dim=hidden_dim).to(device)
+                supcon_criterion = SupervisedContrastiveLoss(temperature=0.07)
+
+                optimizer = torch.optim.Adam(
+                    list(model.parameters()) + list(encoder.parameters()) +
+                    (list(projection_head.parameters()) if contrastive else []),
+                    lr=0.001
+                )
+
                 log("Starting epoch")
                 for epoch in range(self.n_epochs):
-                    self._train_step(model, encoder, optimizer, data, train_mask, pos_weight)
+                    self._train_step(model, encoder, optimizer, data, train_mask, pos_weight,
+                                    contrastive=contrastive,
+                                    projection_head=projection_head,
+                                    supcon_criterion=supcon_criterion,
+                                    lambda_con=0.1)
 
                     if epoch % 10 == 0 or epoch == self.n_epochs - 1:
                         val_loss, val_probs, val_labels = self._eval_step(
@@ -177,7 +192,7 @@ class TrainingProcessor:
     # ──────────────────────────────────────────────────────────────────
 
     # model: [base, temporal, denoising, contrastive]
-    def _build(self, rep, data, use_time=False):
+    def _build(self, rep, data, use_time=False, contrastive=False):
         
         torch.manual_seed(rep)
         np.random.seed(rep)
@@ -202,7 +217,8 @@ class TrainingProcessor:
             residual=True,
             beta=0.1,
             ntypes=data.ntypes,
-            use_time=use_time
+            use_time=use_time,
+
         ).to(device)
 
         print(f"Using device: {device}")
@@ -211,34 +227,35 @@ class TrainingProcessor:
 
         return model, encoder
 
-    def _train_step(self, model, encoder, optimizer, data, mask, pos_weight):
+    def _train_step(self, model, encoder, optimizer, data, mask, pos_weight,
+                contrastive=False, projection_head=None, supcon_criterion=None, lambda_con=0.1):
         model.train(); encoder.train()
         optimizer.zero_grad()
 
-        h_dict = encoder(data)
-        logits = model(data, h_dict)['transaction'][mask]
-        labels = data.nodes['transaction'].data['label'][mask].long()
-
-
-        # DODAJ TU:
-        fraud_mask = labels == 1
-        print("logit fraud:", logits[fraud_mask].mean().item())
-        print("logit non-fraud:", logits[~fraud_mask].mean().item())
-
-        # Użycie Focal Loss
-        weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=logits.device)
+        weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=device)
         focal_criterion = FocalLoss(weight=weight, gamma=2.0)
-        loss = focal_criterion(logits, labels)
+
+        h_dict = encoder(data)
+        h_dict_final, h_hidden_dict = model(data, h_dict, return_hidden=contrastive)
+
+        logits = h_dict_final['transaction'][mask]
+        labels = data.nodes['transaction'].data['label'][mask].long()
+        focal  = focal_criterion(logits, labels)
+
+        if contrastive:
+            hidden = h_hidden_dict['transaction'][mask]
+            sub    = sample_contrastive_subset(labels)
+            z      = projection_head(hidden[sub])
+            con    = supcon_criterion(z, labels[sub])
+            loss   = focal + lambda_con * con
+        else:
+            loss = focal
 
         loss.backward()
-
-        # po pierwszym loss.backward() w pętli treningowej:
-        # for name, param in model.named_parameters():
-        #     if 'time_encoder' in name:
-        #         print(name, param.grad.norm().item() if param.grad is not None else "NO GRAD")
-
         nn.utils.clip_grad_norm_(
-            list(model.parameters()) + list(encoder.parameters()), max_norm=1.0
+            list(model.parameters()) + list(encoder.parameters()) +
+            (list(projection_head.parameters()) if contrastive else []),
+            max_norm=1.0
         )
         optimizer.step()
         return loss.item()
