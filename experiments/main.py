@@ -15,15 +15,14 @@ from models.external.simpleHGN import SimpleHGN
 import os
 from dgl import save_graphs, load_graphs
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def main():
     """
     GRAPH CREATION
     """
 
-    print(f"Using device: {device}")
-    print(f"Model on GPU: {next(model.parameters()).is_cuda}")
-    print(f"Graph on GPU: {data.device}")
+
 
     graph_path = "my_saved_graph_u150.dgl"
 

@@ -8,13 +8,15 @@ from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
 import random
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 class FocalLoss(nn.Module):
     def __init__(self, weight=None, gamma=2.0):
         super().__init__()
         self.weight = weight
         self.gamma = gamma
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
 
     def forward(self, logits, labels):
         # reduction='none' aby policzyć wagę dla każdej próbki
@@ -202,6 +204,10 @@ class TrainingProcessor:
             ntypes=data.ntypes,
             use_time=use_time
         ).to(device)
+
+        print(f"Using device: {device}")
+        print(f"Model on GPU: {next(model.parameters()).is_cuda}")
+        print(f"Graph on GPU: {data.device}")
 
         return model, encoder
 
