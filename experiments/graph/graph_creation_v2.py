@@ -17,7 +17,7 @@ def _money(series: pd.Series) -> np.ndarray:
 def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ibm_v2.csv",
                      cards_path="../data/brown/sd254_cards.csv",
                      users_path="../data/brown/sd254_users.csv",
-                     max_users=50):
+                     max_users=150):
 
     # ── Wczytaj dane ─────────────────────────────────────────────────
     tx    = pd.read_csv(transactions_path)
@@ -47,7 +47,6 @@ def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ib
     # ── Pre-processing kolumn transakcji ──────────────────────────────
     tx = tx.copy()
     tx['AmountNum'] = _money(tx['Amount'])
-    tx['Hour']      = tx['Time'].str.split(':').str[0].astype(float)
     tx['HasError']  = tx['Errors?'].notna().astype(float)
 
     user_state = users['State']  # index = User ID
@@ -89,14 +88,11 @@ def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ib
     # ── USER ───────────────────────────────────────────────────────────
     u = users.iloc[user_ids]
     user_feats = np.column_stack([
-        u['Current Age'].values,
-        u['Retirement Age'].values,
         u['FICO Score'].values,
         u['Num Credit Cards'].values,
         _money(u['Per Capita Income - Zipcode']),
         _money(u['Yearly Income - Person']),
-        _money(u['Total Debt']),
-        (u['Gender'] == 'Male').astype(float).values,
+        _money(u['Total Debt'])
     ])
     hg.nodes['user'].data['h'] = torch.tensor(
         scaler.fit_transform(np.nan_to_num(user_feats)), dtype=torch.float32)
@@ -159,13 +155,10 @@ def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ib
 
     # ── TRANSACTION ────────────────────────────────────────────────────
     tx_num = np.column_stack([
-        tx['Year'].values,
-        tx['Month'].values,
-        tx['Day'].values,
-        tx['Hour'].values,
         np.log1p(tx['AmountNum'].values),
         tx['MCC'].values,
     ])
+
     tx_feats = np.hstack([
         scaler.fit_transform(np.nan_to_num(tx_num)),
         use_chip.values,
@@ -181,6 +174,29 @@ def build_dgl_graph(transactions_path="../data/brown/credit_card_transactions-ib
     for ntype in hg.ntypes:
         hg.nodes[ntype].data['h_raw'] = hg.nodes[ntype].data['h']
         del hg.nodes[ntype].data['h']
+    
+    # ── TIMESTAMPS na krawędziach ──────────────────────────────────────
+    tx['datetime'] = pd.to_datetime(dict(
+        year=tx['Year'],
+        month=tx['Month'],
+        day=tx['Day'],
+        hour=tx['Time'].str.split(':').str[0].astype(int)
+    ))
+    t0 = tx['datetime'].min()
+    tx['timestamp_sec'] = (tx['datetime'] - t0).dt.total_seconds().astype(float)
+
+    ts = torch.tensor(tx['timestamp_sec'].values, dtype=torch.float32)
+
+    # card -> transaction (ct_dst to indeksy transakcji)
+    hg.edges['made'].data['time']     = ts[torch.tensor(ct_dst)]
+    hg.edges['made_by'].data['time']  = ts[torch.tensor(ct_dst)]
+
+    # transaction -> merchant (tm_src to indeksy transakcji = range(n_tx))
+    hg.edges['at'].data['time']       = ts[torch.tensor(tm_src)]
+    hg.edges['received'].data['time'] = ts[torch.tensor(tm_src)]    
+    n_uc = len(uc_src)
+    hg.edges['owns'].data['time']     = torch.zeros(n_uc, dtype=torch.float32)
+    hg.edges['owned_by'].data['time'] = torch.zeros(n_uc, dtype=torch.float32)
 
 
     return hg

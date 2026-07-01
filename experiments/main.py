@@ -21,14 +21,18 @@ def main():
     GRAPH CREATION
     """
 
-    graph_path = "my_saved_graph_u500.dgl"
+    print(f"Using device: {device}")
+    print(f"Model on GPU: {next(model.parameters()).is_cuda}")
+    print(f"Graph on GPU: {data.device}")
+
+    graph_path = "my_saved_graph_u150.dgl"
 
     if os.path.exists(graph_path):
         glist, _ = load_graphs(graph_path)
         data = glist[0]
         print("Graf załadowany z pliku.")
     else:
-        data = gc.build_dgl_graph(max_users=500) 
+        data = gc.build_dgl_graph(max_users=150) 
         save_graphs(graph_path, [data])
         print("Graf utworzony i zapisany do pliku.")
 
@@ -46,24 +50,25 @@ def main():
     tp_hgn = TrainingProcessor("SimpleHGN")
     tp_hgn_200_epochs = TrainingProcessor("SimpleHGN", n_epochs=300)
     tp_hgn_low_loss = TrainingProcessor("SimpleHGN", loss_mul=0.5)
-    tp_hgn_200_epochs_low_loss = TrainingProcessor("SimpleHGN", loss_mul=0.5, n_epochs=200)
+    tp_hgn_200_epochs_low_loss = TrainingProcessor("SimpleHGN", loss_mul=0.5, n_epochs=200, n_reps=10)
 
 
-    r1= tp_hgn.cross_validation_training(data_masks, data)
+    # r1= tp_hgn.cross_validation_training(data_masks, data)
 
-    r2= tp_hgn_200_epochs.cross_validation_training(data_masks, data)
+    # r2= tp_hgn_200_epochs.cross_validation_training(data_masks, data)
+    r_time= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True)
+    r_base= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False)
 
-    r3= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data)
-
-    r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
+    # r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
 
     
-    r1 = dict(r1)
-    r2 = dict(r2)
-    r3 = dict(r3)
-    r4 = dict(r4)
+    # r1 = dict(r1)
+    # r2 = dict(r2)
+    # r3 = dict(r3)
+    r_base = dict(r_base)
+    r_time = dict(r_time)
 
-    d = [r1, r2, r3, r4]
+    d = [r_base, r_time]
 
     log(d)
 
@@ -104,6 +109,7 @@ if __name__ == '__main__':
     start = time.perf_counter()
 
     main()
+
 
     end = time.perf_counter()
     print(f"Execution time: {end - start:.4f} seconds")

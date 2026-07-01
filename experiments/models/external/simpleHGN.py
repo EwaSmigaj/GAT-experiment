@@ -6,52 +6,45 @@ import torch.nn.functional as F
 
 from dgl.ops import edge_softmax
 from dgl.nn.pytorch import TypedLinear
+import math
+import torch
+import torch.nn as nn
 
 
 class TimeEncoder(nn.Module):
-    r"""
-    Time2Vec-style positional encoding for raw (continuous) timestamps.
-
-    Given a scalar timestamp t, produces a `dim`-length vector:
-
-    .. math::
-        \tau(t) = [\,w_0 t + b_0,\; \sin(w_1 t + b_1),\; \dots,\; \sin(w_{dim-1} t + b_{dim-1})\,]
-
-    The first component is linear (captures overall trend / progression through time),
-    the remaining components are sinusoidal with learned frequency and phase (capture
-    periodic patterns, e.g. burst spending or unusual-hour activity that recurs daily
-    or weekly).
-
-    Parameters
-    ----------
-    dim: int
-        output dimension of the time embedding
     """
-    def __init__(self, dim):
-        super(TimeEncoder, self).__init__()
+    Time2Vec z poprawioną inicjalizacją i stabilizacją.
+
+    Zmiany względem poprzedniej wersji:
+    - Częstotliwości log-spaced w zakresie [0.01, 50] zamiast Uniform(-0.1, 0.1)
+    - Fazy rozłożone równomiernie po [0, 2π] dla dywersyfikacji
+    - LayerNorm na wyjściu
+    """
+    def __init__(self, dim: int):
+        super().__init__()
         self.dim = dim
         self.w = nn.Parameter(torch.empty(dim))
         self.b = nn.Parameter(torch.empty(dim))
-        nn.init.xavier_uniform_(self.w.unsqueeze(0), gain=1.414)
-        nn.init.zeros_(self.b)
+        self.norm = nn.LayerNorm(dim)
+        self._init_params()
 
-    def forward(self, t):
-        """
-        Parameters
-        ----------
-        t: tensor, shape (E,)
-            raw timestamps (e.g. unix time, or any monotonically increasing scalar)
+    def _init_params(self):
+        with torch.no_grad():
+            self.w[0] = 1.0       # komponent liniowy (trend)
+            self.b[0] = 0.0
+            if self.dim > 1:
+                # log-space: 0.01 → 50, pokrywa minuty/godziny/dni po normalizacji
+                log_f = torch.linspace(math.log(0.01), math.log(50.0), self.dim - 1)
+                self.w[1:] = torch.exp(log_f)
+                self.b[1:] = torch.linspace(0.0, 2.0 * math.pi, self.dim - 1)
 
-        Returns
-        -------
-        tensor, shape (E, dim)
-            time positional embeddings
-        """
-        t = t.float().unsqueeze(-1)            # (E, 1)
-        out = t * self.w + self.b               # (E, dim)
-        linear_part = out[..., :1]
-        periodic_part = torch.sin(out[..., 1:])
-        return torch.cat([linear_part, periodic_part], dim=-1)
+    def forward(self, t: torch.Tensor) -> torch.Tensor:
+        """t: (E,) znormalizowane timestamps → (E, dim)"""
+        t = t.float().unsqueeze(-1)         # (E, 1)
+        x = t * self.w + self.b             # (E, dim)
+        emb = torch.cat([x[..., :1],
+                         torch.sin(x[..., 1:])], dim=-1)
+        return self.norm(emb)               # (E, dim), stabilne gradienty
 
 
 class SimpleHGN(nn.Module):
@@ -59,29 +52,9 @@ class SimpleHGN(nn.Module):
     This is a model SimpleHGN from `Are we really making much progress? Revisiting, benchmarking, and
     refining heterogeneous graph neural networks
     <https://dl.acm.org/doi/pdf/10.1145/3447548.3467350>`__, extended with an optional temporal
-    module that encodes edge timestamps (Time2Vec) and fuses them into the edge-type embedding
-    used during attention. This lets the model pick up on time-dependent patterns such as burst
-    spending or transactions at unusual hours, when edges carry a `time` feature.
-
-    Calculating the coefficient:
-
-    .. math::
-        \alpha_{ij} = \frac{exp(LeakyReLU(a^T[Wh_i||Wh_j||W_r (r_{\psi(<i,j>)} + \tau(t_{ij}))]))}{\Sigma_{k\in\mathcal{E}}{exp(LeakyReLU(a^T[Wh_i||Wh_k||W_r (r_{\psi(<i,k>)} + \tau(t_{ik}))]))}}
-
-    Residual connection including Node residual:
-
-    .. math::
-        h_i^{(l)} = \sigma(\Sigma_{j\in \mathcal{N}_i} {\alpha_{ij}^{(l)}W^{(l)}h_j^{(l-1)}} + h_i^{(l-1)})
-
-    and Edge residual:
-
-    .. math::
-        \alpha_{ij}^{(l)} = (1-\beta)\alpha_{ij}^{(l)}+\beta\alpha_{ij}^{(l-1)}
-
-    Multi-heads:
-
-    .. math::
-        h^{(l+1)}_j = \parallel^M_{m = 1}h^{(l + 1, m)}_j
+    module that encodes edge timestamps (Time2Vec) and fuses them directly into the attention score
+    as a separate component with its own attention vector a_t. This avoids corrupting the shared
+    edge-type embeddings.
 
     Parameters
     ----------
@@ -110,7 +83,7 @@ class SimpleHGN(nn.Module):
     ntypes: list
         the list of node type
     use_time: bool
-        whether to enable the temporal module (timestamp encoding). default: False
+        whether to enable the temporal module. default: False
     """
     @classmethod
     def build_model_from_args(cls, args, hg):
@@ -158,7 +131,6 @@ class SimpleHGN(nn.Module):
         )
         # hidden layers
         for l in range(1, num_layers - 1):  # noqa E741
-            # due to multi-head, the in_dim = hidden_dim * num_heads
             self.hgn_layers.append(
                 SimpleHGNConv(
                     edge_dim,
@@ -198,8 +170,9 @@ class SimpleHGN(nn.Module):
         Parameters
         ----------
         hg : object
-            the dgl heterogeneous graph. If the temporal module is enabled, edges should
-            carry a 'time' feature (raw timestamps) under hg.edata['time'].
+            the dgl heterogeneous graph. Edges with timestamps should carry
+            a 'time' feature under hg.edata['time']; other edge types should
+            have 'time' set to 0.
         h_dict: dict
             the feature dict of different node types
 
@@ -208,65 +181,56 @@ class SimpleHGN(nn.Module):
         dict
             The embeddings after the output projection.
         """
-        if hasattr(hg, 'ntypes'):
-            # full graph training
-            with hg.local_scope():
-                hg.ndata['h'] = h_dict
-                edata_keys = ['time'] if (self.use_time and 'time' in hg.edata) else []
-                g = dgl.to_homogeneous(hg, ndata='h', edata=edata_keys)
-                h = g.ndata['h']
+        with hg.local_scope():
+            hg.ndata['h'] = h_dict
+            edata_keys = ['time'] if (self.use_time and 'time' in hg.edata) else []
+            g = dgl.to_homogeneous(hg, ndata='h', edata=edata_keys)
+            h = g.ndata['h']
 
-                if 'time' in g.edata:
-                    t = g.edata['time'].float()
-                    mask = t != 0
-                    if mask.any():
-                        t_valid = t[mask]
-                        t[mask] = (t_valid - t_valid.mean()) / (t_valid.std() + 1e-8)
-                        t[~mask] = 0.0
-                    timestamps = t
-                else:
-                    timestamps = None 
+            if self.use_time and 'time' in g.edata:
+                t = g.edata['time'].float()
+                time_valid = (t != 0)                        # maska na ORYGINALNYCH wartościach
+                t_norm = torch.zeros_like(t)
+                if time_valid.any():
+                    t_vals = t[time_valid]
+                    t_norm[time_valid] = (t_vals - t_vals.mean()) / (t_vals.std() + 1e-8)
+                timestamps = t_norm
+                timestamps_mask = time_valid.float()         # przekazywana osobno, nie rekomputowana
+            else:
+                timestamps = None
+                timestamps_mask = None
 
-                print("timestamps stats:", timestamps[timestamps != 0].min().item(), 
-                timestamps[timestamps != 0].max().item(),
-                (timestamps != 0).sum().item())      
-                
-                for l in range(self.num_layers):  # noqa E741
-                    h = self.hgn_layers[l](g, h, g.ndata['_TYPE'], g.edata['_TYPE'], True,
-                                            timestamps=timestamps)
-                    h = h.flatten(1)
+            for l in range(self.num_layers):
+                h = self.hgn_layers[l](g, h, g.ndata['_TYPE'], g.edata['_TYPE'], True,
+                                        timestamps=timestamps,
+                                        timestamps_mask=timestamps_mask)   # <-- nowy arg
+                h = h.flatten(1)
 
-
-
-            h_dict = to_hetero_feat(h, g.ndata['_TYPE'], hg.ntypes)
-        else: # NEVER USED IN THIS PROJET
-            # for minibatch training, input h_dict is a tensor; hg is a list of blocks
-            h = h_dict
-            for layer, block in zip(self.hgn_layers, hg):
-                timestamps = block.edata['time'] if (self.use_time and 'time' in block.edata) else None
-
-                h = layer(block, h, block.ndata['_TYPE']['_N'], block.edata['_TYPE'],
-                          presorted=False, timestamps=timestamps)
-            h_dict = to_hetero_feat(h, block.ndata['_TYPE']['_N'][:block.num_dst_nodes()], self.ntypes)
-
+        h_dict = to_hetero_feat(h, g.ndata['_TYPE'], hg.ntypes)
         return h_dict
 
     @property
     def to_homo_flag(self):
         return True
 
+
 class SimpleHGNConv(nn.Module):
     r"""
-    The SimpleHGN convolution layer, with an optional temporal module that fuses a
-    Time2Vec timestamp embedding into the edge-type embedding before it is used in
-    attention.
+    The SimpleHGN convolution layer, with an optional temporal module.
+
+    When use_time=True, timestamps are encoded via Time2Vec and added directly
+    to the attention score as a separate term with its own attention vector a_t.
+    This keeps the shared edge-type embeddings intact.
+
+    Attention with temporal component:
+
+    .. math::
+        e_{ij} = LeakyReLU(a_l^T W h_i + a_r^T W h_j + a_e^T W_r r_{\psi} + a_t^T \tau(t_{ij}))
 
     Parameters
     ----------
     edge_dim: int
         the edge dimension
-    num_etypes: int
-        the number of the edge type
     in_dim: int
         the input dimension
     out_dim: int
@@ -300,16 +264,16 @@ class SimpleHGNConv(nn.Module):
 
         self.edge_emb = nn.Parameter(torch.empty(size=(num_etypes, edge_dim)))
 
-        self.W = nn.Parameter(torch.FloatTensor(
-            in_dim, out_dim * num_heads))
+        self.W = nn.Parameter(torch.FloatTensor(in_dim, out_dim * num_heads))
         self.W_r = TypedLinear(edge_dim, edge_dim * num_heads, num_etypes)
-
-        if use_time:
-            self.time_encoder = TimeEncoder(edge_dim)
 
         self.a_l = nn.Parameter(torch.empty(size=(1, num_heads, out_dim)))
         self.a_r = nn.Parameter(torch.empty(size=(1, num_heads, out_dim)))
         self.a_e = nn.Parameter(torch.empty(size=(1, num_heads, edge_dim)))
+
+        if use_time:
+            self.time_encoder = TimeEncoder(edge_dim)
+            self.a_t = nn.Parameter(torch.zeros(size=(1, num_heads, edge_dim)))
 
         nn.init.xavier_uniform_(self.edge_emb, gain=1.414)
         nn.init.xavier_uniform_(self.W, gain=1.414)
@@ -328,10 +292,8 @@ class SimpleHGNConv(nn.Module):
 
         self.beta = beta
 
-    def forward(self, g, h, ntype, etype, presorted=False, timestamps=None):
+    def forward(self, g, h, ntype, etype, presorted=False, timestamps=None, timestamps_mask=None):
         """
-        The forward part of the SimpleHGNConv.
-
         Parameters
         ----------
         g : object
@@ -343,10 +305,9 @@ class SimpleHGNConv(nn.Module):
         etype: tensor
             the edge type of the graph
         presorted: boolean
-            if the ntype and etype are preordered, default: ``False``
+            if the ntype and etype are preordered, default: False
         timestamps: tensor, optional, shape (E,)
-            raw edge timestamps. Used only if the temporal module is enabled (use_time=True
-            at construction); ignored otherwise.
+            normalized edge timestamps (non-transaction edges should be 0).
 
         Returns
         -------
@@ -356,19 +317,10 @@ class SimpleHGNConv(nn.Module):
         emb = self.feat_drop(h)
         emb = torch.matmul(emb, self.W).view(-1, self.num_heads, self.out_dim)
         emb[torch.isnan(emb)] = 0.0
-       
+
+        # edge type embedding — unchanged, not polluted by timestamps
         edge_type_emb = self.edge_emb[etype]
-
-        if self.use_time and timestamps is not None:
-            te = self.time_encoder(timestamps)
-            mask = (timestamps != 0).float().unsqueeze(-1)  # zeruj dla non-transaction edges
-            edge_type_emb = edge_type_emb + te * mask
-        
-        print("edge_type_emb after time:", edge_type_emb.min().item(), 
-          edge_type_emb.max().item(), edge_type_emb.abs().mean().item())
-
-        edge_emb = self.W_r(edge_type_emb, etype, presorted).view(-1,
-                                                       self.num_heads, self.edge_dim)
+        edge_emb = self.W_r(edge_type_emb, etype, presorted).view(-1, self.num_heads, self.edge_dim)
 
         row = g.edges()[0]
         col = g.edges()[1]
@@ -377,13 +329,22 @@ class SimpleHGNConv(nn.Module):
         h_r = (self.a_r * emb).sum(dim=-1)[col]
         h_e = (self.a_e * edge_emb).sum(dim=-1)
 
-        edge_attention = self.leakyrelu(h_l + h_r + h_e)
+        if self.use_time and timestamps is not None:
+            te = self.time_encoder(timestamps).view(-1, 1, self.edge_dim)  # (E, 1, edge_dim)
+            # timestamps_mask zamiast (timestamps != 0) – brak buga z normalizacją
+            mask = timestamps_mask.view(-1, 1, 1) if timestamps_mask is not None \
+                else (timestamps != 0).float().view(-1, 1, 1)
+            h_t = (self.a_t * te * mask).sum(dim=-1)                       # (E, num_heads)
+            edge_attention = self.leakyrelu(h_l + h_r + h_e + h_t)
+        else:
+            edge_attention = self.leakyrelu(h_l + h_r + h_e)
+
         edge_attention = edge_softmax(g, edge_attention)
 
         if 'alpha' in g.edata.keys():
             res_attn = g.edata['alpha']
-            edge_attention = edge_attention * \
-                             (1 - self.beta) + res_attn * self.beta
+            edge_attention = edge_attention * (1 - self.beta) + res_attn * self.beta
+
         if self.num_heads == 1:
             edge_attention = edge_attention[:, 0]
             edge_attention = edge_attention.unsqueeze(1)
@@ -406,6 +367,7 @@ class SimpleHGNConv(nn.Module):
             h_output = self.activation(h_output)
 
         return h_output
+
 
 def to_hetero_feat(h, ntype, ntypes):
     h_dict = {}

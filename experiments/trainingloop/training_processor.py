@@ -6,6 +6,7 @@ from collections import defaultdict
 from sklearn.metrics import average_precision_score, precision_recall_curve
 from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
+import random
 
 
 class FocalLoss(nn.Module):
@@ -13,6 +14,7 @@ class FocalLoss(nn.Module):
         super().__init__()
         self.weight = weight
         self.gamma = gamma
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def forward(self, logits, labels):
         # reduction='none' aby policzyć wagę dla każdej próbki
@@ -39,7 +41,7 @@ class InputEncoder(nn.Module):
 
 class TrainingProcessor:
 
-    def __init__(self, model_name, n_reps=3, n_epochs=100, loss_mul=1.0):
+    def __init__(self, model_name, n_reps=3, n_epochs=200, loss_mul=1.0):
         self.model_name = model_name
         self.n_reps     = n_reps
         self.n_epochs   = n_epochs
@@ -49,7 +51,20 @@ class TrainingProcessor:
     # Public
     # ──────────────────────────────────────────────────────────────────
 
-    def cross_validation_training(self, data_masks, data):
+    def cross_validation_training(self, data_masks, data, seed=10, use_time=False):
+        data = data.to(device) 
+        data_masks = [(tr.to(device), vl.to(device), te.to(device))
+                  for tr, vl, te in data_masks]
+
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+        random
+
         results = defaultdict(list)
 
         for rep in range(self.n_reps):
@@ -69,9 +84,9 @@ class TrainingProcessor:
 
                 log(f"\n--- Rep {rep} | Fold {fold_idx} ---")
 
-                model, encoder = self._build(rep, data)
+                model, encoder = self._build(rep, data, use_time)
                 optimizer = torch.optim.Adam(
-                    list(model.parameters()) + list(encoder.parameters()), lr=0.01
+                    list(model.parameters()) + list(encoder.parameters()), lr=0.001
                 )
                 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
                     optimizer, mode='max', factor=0.5, patience=3
@@ -94,7 +109,7 @@ class TrainingProcessor:
                         val_loss, val_probs, val_labels = self._eval_step(
                             model, encoder, data, val_mask, pos_weight)
                         pr_auc = average_precision_score(val_labels.numpy(), val_probs.numpy())
-                        m      = self._eval_with_threshold(val_probs, val_labels, 0.5)
+                        m      = self._eval_with_threshold(val_probs, val_labels, 0.9)
 
                         epoch_stats["loss"].append(val_loss)
                         epoch_stats["val_pr_auc"].append(pr_auc)
@@ -127,17 +142,23 @@ class TrainingProcessor:
                 _, test_probs, test_labels = self._eval_step(model, encoder, data, test_mask, pos_weight)
                 test_m = self._eval_with_threshold(test_probs, test_labels, threshold)
 
+                pr_auc_test = average_precision_score(test_labels.numpy(), test_probs.numpy())
+
                 fold_cms.append(test_m["confusion_matrix"])
                 fold_mcen_aux.append(test_m["mcen"])
                 fold_results["acc"].append(test_m["acc"])
                 fold_results["recall"].append(test_m["recall"])
                 fold_results["precision"].append(test_m["precision"])
                 fold_results["f1_score"].append(test_m["f1"])
+                fold_results["pr_auc"].append(pr_auc_test)
+                fold_results["mcen"].append(test_m["mcen"])
 
-                log(f"Fold {fold_idx} | BEST EPOCH={best_epoch} | PR-AUC(val)={best_pr_auc:.4f} | "
-                    f"Threshold={threshold:.3f} | Test F1={test_m['f1']:.4f} | "
+                log(f"Fold {fold_idx} | BEST EPOCH={best_epoch} | Threshold={threshold:.3f} | PR-AUC(test)={pr_auc_test:.4f} "
+                    f" | Test F1={test_m['f1']:.4f} | "
                     f"Precision={test_m['precision']:.4f} | Recall={test_m['recall']:.4f} | "
                     f"MCEN(aux)={test_m['mcen']:.4f}")
+
+                log(f"{pr_auc_test:.4f}, {test_m['f1']:.4f}, {test_m['precision']:.4f}, {test_m['recall']:.4f}, {test_m['mcen']:.4f}, {test_m['acc']:.4f}")
 
             for k in fold_results:
                 results[k].append(np.mean(fold_results[k]))
@@ -153,23 +174,35 @@ class TrainingProcessor:
     # Internals
     # ──────────────────────────────────────────────────────────────────
 
-    def _build(self, rep, data):
+    # model: [base, temporal, denoising, contrastive]
+    def _build(self, rep, data, use_time=False):
+        
         torch.manual_seed(rep)
-        encoder = InputEncoder(data, proj_dim=32)
+        np.random.seed(rep)
+        random.seed(rep)
+        torch.cuda.manual_seed(rep)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+        torch.manual_seed(rep)
+        encoder = InputEncoder(data, proj_dim=32).to(device)
+
         model   = SimpleHGN(
             edge_dim=8,
             num_etypes=len(data.etypes),
             in_dim=[32],
             hidden_dim=16,
             num_classes=2,
-            num_layers=2,
+            num_layers=3,
             heads=[4, 4, 1],
             feat_drop=0.1,
             negative_slope=0.2,
             residual=True,
             beta=0.1,
             ntypes=data.ntypes,
-        )
+            use_time=use_time
+        ).to(device)
+
         return model, encoder
 
     def _train_step(self, model, encoder, optimizer, data, mask, pos_weight):
@@ -180,12 +213,24 @@ class TrainingProcessor:
         logits = model(data, h_dict)['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
+
+        # DODAJ TU:
+        fraud_mask = labels == 1
+        print("logit fraud:", logits[fraud_mask].mean().item())
+        print("logit non-fraud:", logits[~fraud_mask].mean().item())
+
         # Użycie Focal Loss
         weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=logits.device)
         focal_criterion = FocalLoss(weight=weight, gamma=2.0)
         loss = focal_criterion(logits, labels)
 
         loss.backward()
+
+        # po pierwszym loss.backward() w pętli treningowej:
+        # for name, param in model.named_parameters():
+        #     if 'time_encoder' in name:
+        #         print(name, param.grad.norm().item() if param.grad is not None else "NO GRAD")
+
         nn.utils.clip_grad_norm_(
             list(model.parameters()) + list(encoder.parameters()), max_norm=1.0
         )
@@ -200,13 +245,13 @@ class TrainingProcessor:
         logits = model(data, h_dict)['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
 
-        # Użycie Focal Loss
         weight = torch.tensor([1.0, pos_weight], dtype=torch.float32, device=logits.device)
         focal_criterion = FocalLoss(weight=weight, gamma=2.0)
         loss = focal_criterion(logits, labels)
-        
-        probs = torch.softmax(logits, dim=1)[:, 1]
-        return loss.item(), probs.cpu(), labels.cpu()
+
+        probs = torch.softmax(logits, dim=1)[:, 1]  
+
+        return loss.item(), probs.cpu(), labels.cpu() 
 
     def _find_best_threshold(self, y_true, y_probs):
         precision, recall, thresholds = precision_recall_curve(y_true, y_probs)
@@ -215,7 +260,6 @@ class TrainingProcessor:
         t   = float(thresholds[idx])
         log(f"--- Optymalizacja progu ---")
         log(f"Najlepszy próg: {t:.4f}")
-        log(f"F1: {f1[idx]:.4f} | Precision: {precision[idx]:.4f} | Recall: {recall[idx]:.4f}")
         return t
 
     def _eval_with_threshold(self, probs, labels, threshold):
