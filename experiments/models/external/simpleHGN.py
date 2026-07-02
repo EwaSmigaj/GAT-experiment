@@ -431,3 +431,48 @@ def sample_contrastive_subset(labels, neg_per_pos=8, max_size=4000):
     n_neg = min(len(neg_idx_all), len(pos_idx) * neg_per_pos, max(max_size - len(pos_idx), 0))
     perm = torch.randperm(len(neg_idx_all), device=neg_idx_all.device)[:n_neg]
     return torch.cat([pos_idx, neg_idx_all[perm]])
+
+
+class DenoisingModule(nn.Module):
+    """
+    Denoising Module: rekonstrukcja zaszumionych cech wejściowych węzłów.
+
+    Dla każdego typu węzła dodaje szum gaussowski N(0, sigma_t^2) do surowych
+    cech (h_raw), koduje je współdzielonym InputEncoder (te same wagi co
+    główna ścieżka), a następnie dekoduje z powrotem do przestrzeni cech
+    wejściowych osobnym dekoderem per typ. Strata rekonstrukcji (MSE) działa
+    jak trening denoising autoencodera i wymusza na InputEncoderze reprezentacje
+    odporne na perturbacje wejścia — zgodnie z L_denoise = ||x_i - x_hat_i||^2.
+
+    sigma jest różna per typ węzła, bo cechy poszczególnych modalności mają
+    różną wiarygodność (np. merchant jest bardziej zaszumiony/rzadki niż
+    transaction). Operuje na całym grafie i nie korzysta z etykiet fraud,
+    więc nie ma ryzyka wycieku między splitami.
+    """
+    DEFAULT_SIGMA = {'user': 0.10, 'card': 0.10, 'transaction': 0.05, 'merchant': 0.15}
+
+    def __init__(self, hg, proj_dim=32, sigma=None):
+        super().__init__()
+        self.sigma = sigma or self.DEFAULT_SIGMA
+        self.decoders = nn.ModuleDict({
+            ntype: nn.Linear(proj_dim, hg.nodes[ntype].data['h_raw'].shape[1])
+            for ntype in hg.ntypes
+        })
+
+    def forward(self, encoder, hg):
+        """
+        encoder: InputEncoder współdzielony z główną ścieżką (nn.ModuleDict per typ)
+        hg: graf z surowymi cechami w hg.nodes[ntype].data['h_raw']
+
+        Zwraca stratę rekonstrukcji (MSE) uśrednioną po typach węzłów.
+        """
+        losses = []
+        for ntype, enc in encoder.encoders.items():
+            x_clean = hg.nodes[ntype].data['h_raw']
+            sigma   = self.sigma.get(ntype, 0.1)
+            x_noisy = x_clean + torch.randn_like(x_clean) * sigma
+
+            x_hat = self.decoders[ntype](enc(x_noisy))
+            losses.append(F.mse_loss(x_hat, x_clean))
+
+        return torch.stack(losses).mean()

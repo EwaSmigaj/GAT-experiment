@@ -7,7 +7,7 @@ from sklearn.metrics import average_precision_score, precision_recall_curve
 from evaluation.file_logger import log
 from models.external.simpleHGN import SimpleHGN
 import random
-from models.external.simpleHGN import ProjectionHead, SupervisedContrastiveLoss, sample_contrastive_subset
+from models.external.simpleHGN import ProjectionHead, SupervisedContrastiveLoss, sample_contrastive_subset, DenoisingModule
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -54,7 +54,9 @@ class TrainingProcessor:
     # Public
     # ──────────────────────────────────────────────────────────────────
 
-    def cross_validation_training(self, data_masks, data, seed=10, use_time=False, contrastive=False):
+    def cross_validation_training(self, data_masks, data, seed=10, use_time=False, contrastive=False, denoise=False):
+
+        log(f"CV START use_time={use_time}, contrastive={contrastive}, denoise={denoise}")
         data = data.to(device) 
         data_masks = [(tr.to(device), vl.to(device), te.to(device))
                   for tr, vl, te in data_masks]
@@ -88,12 +90,6 @@ class TrainingProcessor:
                 log(f"\n--- Rep {rep} | Fold {fold_idx} ---")
 
                 model, encoder = self._build(rep, data, use_time, contrastive)
-                optimizer = torch.optim.Adam(
-                    list(model.parameters()) + list(encoder.parameters()), lr=0.001
-                )
-                scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                    optimizer, mode='max', factor=0.5, patience=3
-                )
 
                 # pos_weight raz z train_mask – nie przeliczamy w _eval_step
                 train_labels = data.nodes['transaction'].data['label'][train_mask]
@@ -105,13 +101,18 @@ class TrainingProcessor:
                 epoch_stats      = defaultdict(list)
 
                 hidden_dim = 16 * 4  # hidden_dim * heads[-2]
-                projection_head = ProjectionHead(in_dim=hidden_dim).to(device)
+                projection_head  = ProjectionHead(in_dim=hidden_dim).to(device)
                 supcon_criterion = SupervisedContrastiveLoss(temperature=0.07)
+                denoising_module = DenoisingModule(data, proj_dim=32).to(device) if denoise else None
 
                 optimizer = torch.optim.Adam(
                     list(model.parameters()) + list(encoder.parameters()) +
-                    (list(projection_head.parameters()) if contrastive else []),
+                    (list(projection_head.parameters()) if contrastive else []) +
+                    (list(denoising_module.parameters()) if denoise else []),
                     lr=0.001
+                )
+                scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                    optimizer, mode='max', factor=0.5, patience=3
                 )
 
                 log("Starting epoch")
@@ -120,7 +121,10 @@ class TrainingProcessor:
                                     contrastive=contrastive,
                                     projection_head=projection_head,
                                     supcon_criterion=supcon_criterion,
-                                    lambda_con=0.1)
+                                    lambda_con=0.1,
+                                    denoise=denoise,
+                                    denoising_module=denoising_module,
+                                    lambda_denoise=0.1)
 
                     if epoch % 10 == 0 or epoch == self.n_epochs - 1:
                         val_loss, val_probs, val_labels = self._eval_step(
@@ -228,7 +232,8 @@ class TrainingProcessor:
         return model, encoder
 
     def _train_step(self, model, encoder, optimizer, data, mask, pos_weight,
-                contrastive=False, projection_head=None, supcon_criterion=None, lambda_con=0.1):
+                contrastive=False, projection_head=None, supcon_criterion=None, lambda_con=0.1,
+                denoise=False, denoising_module=None, lambda_denoise=0.1):
         model.train(); encoder.train()
         optimizer.zero_grad()
 
@@ -236,25 +241,33 @@ class TrainingProcessor:
         focal_criterion = FocalLoss(weight=weight, gamma=2.0)
 
         h_dict = encoder(data)
-        h_dict_final, h_hidden_dict = model(data, h_dict, return_hidden=contrastive)
+        if contrastive:
+            h_dict_final, h_hidden_dict = model(data, h_dict, return_hidden=True)
+        else:
+            h_dict_final = model(data, h_dict, return_hidden=False)
+            h_hidden_dict = None
 
         logits = h_dict_final['transaction'][mask]
         labels = data.nodes['transaction'].data['label'][mask].long()
         focal  = focal_criterion(logits, labels)
+        loss   = focal
 
         if contrastive:
             hidden = h_hidden_dict['transaction'][mask]
             sub    = sample_contrastive_subset(labels)
             z      = projection_head(hidden[sub])
             con    = supcon_criterion(z, labels[sub])
-            loss   = focal + lambda_con * con
-        else:
-            loss = focal
+            loss   = loss + lambda_con * con
+
+        if denoise:
+            rec  = denoising_module(encoder, data)
+            loss = loss + lambda_denoise * rec
 
         loss.backward()
         nn.utils.clip_grad_norm_(
             list(model.parameters()) + list(encoder.parameters()) +
-            (list(projection_head.parameters()) if contrastive else []),
+            (list(projection_head.parameters()) if contrastive else []) +
+            (list(denoising_module.parameters()) if denoise else []),
             max_norm=1.0
         )
         optimizer.step()
@@ -315,5 +328,3 @@ class TrainingProcessor:
         c0 = -(FP / (d0 + eps)) * np.log(FP / (d0 + eps) + eps) if FP > 0 else 0.0
         c1 = -(FN / (d1 + eps)) * np.log(FN / (d1 + eps) + eps) if FN > 0 else 0.0
         return 0.5 * (c0 + c1)
-
-        

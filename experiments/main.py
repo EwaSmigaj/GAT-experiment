@@ -57,7 +57,10 @@ def main():
     # r2= tp_hgn_200_epochs.cross_validation_training(data_masks, data)
     # r_time= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True)
     # r_base= tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False)
-    r_contrastive = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False, contrastive=True)
+    r_denoise = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, denoise=True)
+    r_denoise_time = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True, contrastive=False, denoise=True)
+    r_denoise_contrastive = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=False, contrastive=True, denoise=True)
+    r_all = tp_hgn_200_epochs_low_loss.cross_validation_training(data_masks, data, use_time=True, contrastive=True, denoise=True)
 
     # r4= tp_hgn_low_loss.cross_validation_training(data_masks, data)
 
@@ -65,10 +68,13 @@ def main():
     # r1 = dict(r1)
     # r2 = dict(r2)
     # r3 = dict(r3)
-    r_base = dict(r_contrastive)
+    r_denoise = dict(r_denoise)
+    r_denoise_time = dict(r_denoise_time)
+    r_denoise_contrastive = dict(r_denoise_contrastive)
+    r_all = dict(r_all)
     # r_time = dict(r_time)
 
-    d = [r_base]
+    d = [r_denoise, r_denoise_time, r_denoise_contrastive, r_all]
 
     log(d)
 
