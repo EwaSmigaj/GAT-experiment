@@ -54,10 +54,9 @@ class TrainingProcessor:
     # Public
     # ──────────────────────────────────────────────────────────────────
 
-    def cross_validation_training(self, data_masks, data, seed=10, use_time=False, contrastive=False, denoise=False):
+    def cross_validation_training(self, data_masks, data, seed=11, use_time=False, contrastive=False, denoise=False):
 
         log(f"CV START use_time={use_time}, contrastive={contrastive}, denoise={denoise}")
-        data = data.to(device) 
         data_masks = [(tr.to(device), vl.to(device), te.to(device))
                   for tr, vl, te in data_masks]
 

@@ -2,10 +2,9 @@ import numpy as np
 from scipy.stats import rankdata, studentized_range, wilcoxon, friedmanchisquare
 import math
 from collections import defaultdict
-from itertools import combinations                                                                                                                                                                                                              
+from itertools import combinations
 from evaluation.file_logger import log
 import matplotlib.pyplot as plt
-import networkx as nx
 
 
 class StatisticalAnalysis():
@@ -18,13 +17,15 @@ class StatisticalAnalysis():
 
         print(f"DATA = {self.data}")
         print(f"STAT_SUM = {self.statistics_summary}")
-        
 
-        # statistics summary: 
+
+        # statistics summary:
         # {
-        #  'acc': {'friedman_anova': 123, 'p_val': 0.05, 'chi_square': 0.3, 'nemenyi': 34.3},
+        #  'acc': {'friedman_anova': 123, 'p_val': 0.05, 'eta_squared': 0.3, 'kendalls_w': 0.4,
+        #          'nemenyi': {...}, 'wilcoxon_holm': [...]},
         #  (...)
-        #  'recall': {'friedman_anova': 23, 'p_val': 0.05, 'chi_square': 0.3,'nemenyi': 24.1}
+        #  'recall': {'friedman_anova': 23, 'p_val': 0.05, 'eta_squared': 0.3, 'kendalls_w': 0.4,
+        #             'nemenyi': {...}, 'wilcoxon_holm': [...]}
         # }
 
         print("friedman")
@@ -61,7 +62,7 @@ class StatisticalAnalysis():
         for g in data:
             for key in g.keys():
                 d[key].append(g[key])
-        
+
         return d
 
     def _set_friedman_p_val(self):
@@ -72,7 +73,7 @@ class StatisticalAnalysis():
             self.statistics_summary[key]['friedman_anova'] = friedman
             self.statistics_summary[key]['p_val'] = p_value
 
-    def _set_proportion_of_variance(self): 
+    def _set_proportion_of_variance(self):
         for key in self.statistics_summary.keys():
             results = self.data[key]
 
@@ -87,7 +88,7 @@ class StatisticalAnalysis():
             self.statistics_summary[key]['eta_squared'] = eta_squared
             self.statistics_summary[key]['kendalls_w'] = kendalls_w
 
-    def _set_nemenyi_test(self): 
+    def _set_nemenyi_test(self):
         print("_________ NEMENYI __________")
         for key in self.statistics_summary.keys():
             print(f"\n ANALYZING {key} \n")
@@ -100,13 +101,14 @@ class StatisticalAnalysis():
             ranks = np.array([
                 rankdata(-data[:, j])
                 for j in range(n)
-            ]).T   # shape: (k, n)            print(f"k = {k}, n= {n}")
+            ]).T   # shape: (k, n)
+            print(f"k = {k}, n= {n}")
 
             log(f"ranks = " + str(ranks))
 
             avg_ranks = ranks.mean(axis=1)
 
-            log(f"avg_anks = " + str(avg_ranks))
+            log(f"avg_ranks = " + str(avg_ranks))
 
             CD = self._nemenyi_cd(k, n)
 
@@ -115,28 +117,30 @@ class StatisticalAnalysis():
             method_names = [f"G{i}" for i in range(k)]
 
             comparisons = []
-            for i, j in combinations(range(k), 2):
-                diff = abs(avg_ranks[i] - avg_ranks[j])
+            for j in range(1, k):
+                diff = abs(avg_ranks[0] - avg_ranks[j])
                 comparisons.append({
-                    "method_1": method_names[i],
+                    "method_1": method_names[0],
                     "method_2": method_names[j],
                     "rank_diff": float(diff),
                     "significant": float(diff) > float(CD)
                 })
 
-        log("NEMENYI RESULTS: ")
-        for comp in comparisons:
-            log("key - " + str(key))
-            log(comparisons)
+            self.statistics_summary[key]['nemenyi'] = {
+                "avg_ranks": dict(zip(method_names, avg_ranks.tolist())),
+                "CD": CD,
+                "comparisons": comparisons,
+            }
+
+            log(f"NEMENYI RESULTS ({key}): ")
+            for comp in comparisons:
+                log(comp)
             log("___________________")
 
-
     def _nemenyi_cd(self, k, n, alpha=0.05):
-
-        q_alpha = studentized_range.ppf(1 - alpha, k, np.inf)
+        q_alpha = studentized_range.ppf(1 - alpha, k, np.inf) / math.sqrt(2)
         return q_alpha * math.sqrt((k * (k + 1)) / (6 * n))
 
-    
     def _holm_correction(self, p_values, alpha=0.05):
         m = len(p_values)
         sorted_indices = np.argsort(p_values)
@@ -156,7 +160,7 @@ class StatisticalAnalysis():
         for key in self.statistics_summary.keys():
 
             results = self.data[key]
-            
+
             k = len(results)
             n = len(results[0])
 
@@ -165,15 +169,15 @@ class StatisticalAnalysis():
             p_values = []
             pairs = []
 
-            for i, j in combinations(range(k), 2):
+            for j in range(1, k):
                 stat, p = wilcoxon(
-                    results[i],
+                    results[0],
                     results[j],
-                    zero_method="wilcox",
+                    zero_method="pratt",
                     alternative="two-sided"
                 )
                 p_values.append(p)
-                pairs.append((i, j, stat))
+                pairs.append((0, j, stat))
 
             significant = self._holm_correction(p_values, alpha)
 
@@ -183,91 +187,74 @@ class StatisticalAnalysis():
             ):
                 results_table.append({
                     "key": key,
-                    "method_1": method_names[i],
+                    "method_1": method_names[0],
                     "method_2": method_names[j],
                     "W": stat,
                     "p_uncorrected": p,
                     "significant": sig
                 })
+
+            self.statistics_summary[key]['wilcoxon_holm'] = results_table
+
             print(f"\n {key}")
             for r in results_table:
                 log(
-                    str(r['method_1']) + " vs " + str(r['method_2']) + ": " 
+                    str(r['method_1']) + " vs " + str(r['method_2']) + ": "
                     + "W= " + str(r['W']) + " p= " + str(round(r['p_uncorrected'], 4)) + ", "
                     + str('SIGNIFICANT' if r['significant'] else 'n.s.')
                 )
 
 
 def plot_nemenyi_cd(ranks, cd, title="Critical Difference (Nemenyi)"):
-    """
-    Plots a Critical Difference diagram for the Nemenyi test.
-    
-    Args:
-        ranks (dict): Dictionary of {method_name: average_rank}
-        cd (float): The Critical Difference value (e.g., 1.21)
-        title (str): Title of the plot
-    """
     # 1. Sort ranks
     sorted_ranks = sorted(ranks.items(), key=lambda x: x[1])
     methods, rank_values = zip(*sorted_ranks)
-    
+    k = len(methods)
+
     # 2. Setup Plot
-    fig, ax = plt.subplots(figsize=(8, 3))
+    fig, ax = plt.subplots(figsize=(max(8, k), 3))
     ax.set_title(title, pad=20, fontsize=14)
-    
-    # Define range for the axis (invert so 1 is on the left or right depending on preference)
-    # Standard CD diagrams usually put lower rank (better) on the left or right.
-    # We will put Best (1.0) on the Left.
-    low, high = 1, len(methods)
+
+    low, high = 1, k
     ax.set_xlim(low - 0.5, high + 0.5)
     ax.set_ylim(0, 1)
-    
+
     # Draw the main axis line
     ax.hlines(0.2, low, high, color='black', linewidth=1.5)
-    
+
     # Add Tick Markers
     for i in range(low, high + 1):
         ax.vlines(i, 0.2, 0.25, color='black')
         ax.text(i, 0.28, str(i), ha='center', va='bottom', fontsize=10)
-    
+
     # 3. Plot Methods and Ranks
-    # We stagger heights to prevent text overlap if ranks are close
-    levels = [0.2, 0.05, 0.2, 0.05] # Toggle heights for labels
-    
     for i, (method, r) in enumerate(zip(methods, rank_values)):
-        # Draw marker on line
         ax.plot(r, 0.2, 'o', color='black', markersize=6)
-        
-        # Draw text label with line pointing to marker
-        level = 0.05 if i % 2 == 0 else 0.45 # Alternate label positions (top/bottom)
+
+        level = 0.05 if i % 2 == 0 else 0.45  # Alternate label positions (top/bottom)
         va = 'top' if level < 0.2 else 'bottom'
-        
-        # Line from axis to label
+
         ax.plot([r, r], [0.2, level], '-', color='gray', linewidth=0.8)
-        
-        # Label text
         ax.text(r, level, f"{method}\n({r:.2f})", ha='center', va=va, fontsize=11, fontweight='bold')
 
-    # 4. Draw Connecting Bars for Non-Significant Differences
-    # We look for groups where max_rank - min_rank < CD
-    # Simple logic: Connect consecutive models if diff < CD
-    # (For 3 models, we just check pairs manually for the line drawing)
-    
-    y_bar = 0.25 # Height for connection bars
-    
-    # Check cliques/groups
-    # Group 1: G0 & G1? (2.93 - 1.87 = 1.06 < 1.21) -> YES
-    # Group 2: G1 & G2? (1.87 - 1.20 = 0.67 < 1.21) -> YES
-    # Group 3: G0 & G2? (2.93 - 1.20 = 1.73 > 1.21) -> NO
-    
-    # Draw bar for G2-G1
-    if abs(ranks['G1'] - ranks['G2']) < cd:
-        ax.hlines(y_bar + 0.02, ranks['G2'], ranks['G1'], color='red', linewidth=3, label='Not Sig.')
-        
-    # Draw bar for G1-G0
-    if abs(ranks['G0'] - ranks['G1']) < cd:
-         # Shift y slightly up if overlapping, or use same line if distinct
-        ax.hlines(y_bar + 0.02, ranks['G1'], ranks['G0'], color='red', linewidth=3)
+    y_bar = 0.25
+    bar_offset = 0.0
+    first_bar = True
+    start = 0
+    while start < k - 1:
+        end = start
+        while end + 1 < k and (rank_values[end + 1] - rank_values[start]) < cd:
+            end += 1
+        if end > start:
+            ax.hlines(
+                y_bar + 0.02 + bar_offset,
+                rank_values[start], rank_values[end],
+                color='red', linewidth=3,
+                label='Not Sig.' if first_bar else None,
+            )
+            first_bar = False
+            bar_offset += 0.03
+        start += 1
 
     # 5. Add CD ruler (visual guide)
     ax.hlines(0.8, low, low + cd, color='black', linewidth=2)
@@ -280,13 +267,5 @@ def plot_nemenyi_cd(ranks, cd, title="Critical Difference (Nemenyi)"):
     plt.tight_layout()
     plt.show()
 
-# --- INPUT DATA FROM YOUR RESULTS ---
-# Ranks for F1-Score
-ranks_f1 = {
-    'G0': 2.933,
-    'G1': 1.867,
-    'G2': 1.200
-}
-cd_value = 1.210
 
 # plot_nemenyi_cd(ranks_f1, cd_value, title="F1-Score Comparison (Nemenyi Test)")
